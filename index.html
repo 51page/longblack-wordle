@@ -109,7 +109,7 @@
     <div id="stats-modal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>통계</h2>
+                <h2>내 통계</h2>
                 <button class="close-btn" data-modal="stats">&times;</button>
             </div>
             <div class="modal-body">
@@ -135,6 +135,33 @@
                     <h3>결과 공유하기</h3>
                     <button id="share-btn" class="share-btn">결과 복사</button>
                     <div id="next-word-info" class="next-word-info"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 결과 모달 (성공 시) -->
+    <div id="result-modal" class="modal hidden">
+        <div class="modal-content result-content">
+            <div class="modal-header">
+                <h2 id="result-title">정답입니다! 🎉</h2>
+                <button class="close-btn" data-modal="result">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="result-summary">
+                    <p id="result-message">정답을 맞추셨습니다!</p>
+                </div>
+
+                <div class="note-info-card">
+                    <div class="note-tag">오늘의 롱블랙 노트</div>
+                    <h3 id="result-note-title" class="note-title"></h3>
+                    <p id="result-note-desc" class="note-desc"></p>
+                    <a id="result-note-link" href="#" target="_blank" class="read-note-btn">롱블랙 노트 보러가기 →</a>
+                </div>
+
+                <div class="result-actions">
+                    <button id="result-share-btn" class="share-btn highlight">결과 공유하기</button>
+                    <div id="result-next-timer" class="next-word-info"></div>
                 </div>
             </div>
         </div>

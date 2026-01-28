@@ -324,19 +324,67 @@ function handleGameEnd() {
                 ? messages[guessCount - 1]
                 : '성공!';
             showMessage(message, 3000);
+
+            // 결과 모달 표시 (성공 시)
+            setTimeout(() => {
+                showResultModal();
+            }, 1200);
         } else {
             const todayWordData = getTodayWord();
             const displayAnswer = todayWordData.original || gameState.answer;
             showMessage(`정답은 "${displayAnswer}" 입니다`, 5000);
-        }
 
-        // 통계 모달 표시
-        setTimeout(() => {
-            openModal('stats');
-            updateStatsDisplay();
-            showShareSection(gameState.guesses, gameState.evaluations, gameState.answer);
-        }, 2000);
+            // 실패 시에도 통계 모달은 표시
+            setTimeout(() => {
+                openModal('stats');
+                updateStatsDisplay();
+                showShareSection(gameState.guesses, gameState.evaluations, gameState.answer);
+            }, 2500);
+        }
     }, 500);
+}
+
+// 결과 모달 채우기 및 표시
+function showResultModal() {
+    const todayWordData = getTodayWord();
+
+    // 모달 텍스트 및 링크 업데이트
+    document.getElementById('result-note-title').textContent = todayWordData.original || todayWordData.word;
+    document.getElementById('result-note-desc').textContent = todayWordData.description;
+
+    const linkBtn = document.getElementById('result-note-link');
+    linkBtn.href = todayWordData.url;
+
+    // 공유 버튼 이벤트 설정
+    const shareBtn = document.getElementById('result-share-btn');
+    shareBtn.onclick = () => {
+        const startDate = new Date('2026-01-28');
+        startDate.setHours(0, 0, 0, 0);
+        const gameNumber = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24)) + 1;
+        const shareText = generateShareText(gameState.guesses, gameState.evaluations, gameState.wordLength, gameNumber);
+
+        navigator.clipboard.writeText(shareText).then(() => {
+            showMessage('결과가 복사되었습니다!', 2000);
+        });
+    };
+
+    // 다음 문제 타이머 표시
+    const timerElement = document.getElementById('result-next-timer');
+    function updateTimer() {
+        const time = getTimeUntilNextWord();
+        timerElement.textContent = `다음 문제까지 ${time.hours}시간 ${time.minutes}분 ${time.seconds}초 남았습니다.`;
+    }
+
+    updateTimer();
+    const resultTimerInterval = setInterval(() => {
+        if (!document.getElementById('result-modal').classList.contains('hidden')) {
+            updateTimer();
+        } else {
+            clearInterval(resultTimerInterval);
+        }
+    }, 1000);
+
+    openModal('result');
 }
 
 // 현재 상태 저장
