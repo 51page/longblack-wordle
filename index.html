@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="롱블랙 단어 맞추기 - 매일 새로운 롱블랙 노트 제목을 맞춰보세요">
+    <meta name="keywords" content="롱블랙, 단어게임, 단어맞추기, LongBlack">
+    <meta property="og:title" content="롱블랙 단어 맞추기">
+    <meta property="og:description" content="매일 새로운 롱블랙 노트 제목을 맞춰보세요">
+    <meta property="og:type" content="website">
+    <title>롱블랙 단어 맞추기</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/index.css">
+</head>
+
+<body>
+    <div id="app">
+        <header id="header">
+            <div class="header-content">
+                <h1 class="logo">롱블랙 단어 맞추기</h1>
+                <div class="header-buttons">
+                    <button id="stats-btn" class="icon-btn" aria-label="통계">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="10" width="4" height="11" />
+                            <rect x="10" y="6" width="4" height="15" />
+                            <rect x="17" y="2" width="4" height="19" />
+                        </svg>
+                    </button>
+                    <button id="help-btn" class="icon-btn" aria-label="도움말">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                            <circle cx="12" cy="17" r="0.5" fill="currentColor" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main id="game-container">
+            <div id="message" class="message hidden"></div>
+            <div id="hint-section" class="hint-section">
+                <h3 class="hint-title">💡 오늘의 힌트</h3>
+                <div id="hint" class="hint"></div>
+            </div>
+            <div id="game-board"></div>
+            <div id="keyboard"></div>
+        </main>
+    </div>
+
+    <!-- 도움말 모달 -->
+    <div id="help-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>게임 방법</h2>
+                <button class="close-btn" data-modal="help">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>롱블랙 노트에서 나온 제목을 6번 안에 맞춰보세요!</p>
+
+                <p><strong>한글 입력 방법:</strong></p>
+                <p>키보드의 자음과 모음을 눌러 한 글자씩 조합합니다.<br>
+                    예: ㅂ → ㅡ → ㄹ → ㅐ → ㄴ → ㄷ = "브랜드"</p>
+
+                <div class="example">
+                    <p><strong>색상 의미:</strong></p>
+                    <div class="example-row">
+                        <div class="tile correct">브</div>
+                        <div class="tile">랜</div>
+                        <div class="tile">드</div>
+                    </div>
+                    <p><strong>브</strong>는 정답이며 올바른 위치입니다.</p>
+                </div>
+
+                <div class="example">
+                    <div class="example-row">
+                        <div class="tile">디</div>
+                        <div class="tile present">자</div>
+                        <div class="tile">인</div>
+                    </div>
+                    <p><strong>자</strong>는 정답에 포함되지만 위치가 틀렸습니다.</p>
+                </div>
+
+                <div class="example">
+                    <div class="example-row">
+                        <div class="tile">마</div>
+                        <div class="tile">케</div>
+                        <div class="tile absent">팅</div>
+                    </div>
+                    <p><strong>팅</strong>은 정답에 포함되지 않습니다.</p>
+                </div>
+
+                <p class="note">매일 자정에 새로운 단어가 공개됩니다!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 통계 모달 -->
+    <div id="stats-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>통계</h2>
+                <button class="close-btn" data-modal="stats">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-played">0</div>
+                        <div class="stat-label">플레이</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-win-rate">0</div>
+                        <div class="stat-label">승률</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-streak">0</div>
+                        <div class="stat-label">연속</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-max-streak">0</div>
+                        <div class="stat-label">최고 연속</div>
+                    </div>
+                </div>
+                <div id="share-section" class="share-section hidden">
+                    <h3>결과 공유하기</h3>
+                    <button id="share-btn" class="share-btn">결과 복사</button>
+                    <div id="next-word-info" class="next-word-info"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/data/words.js"></script>
+    <script src="src/game/storage.js"></script>
+    <script src="src/game/gameLogic.js"></script>
+    <script src="src/components/Header.js"></script>
+    <script src="src/components/GameBoard.js"></script>
+    <script src="src/components/Keyboard.js"></script>
+    <script src="src/components/Modal.js"></script>
+    <script src="src/app.js"></script>
+</body>
+
+</html>
