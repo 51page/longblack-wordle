@@ -63,6 +63,9 @@ function initializeGame() {
     // 힌트 표시 (단어 설명 포함)
     showHint(wordLength, todayWordData.description);
 
+    // 타이머 시작
+    startCountdown();
+
     // 보드 업데이트
     updateBoardWithComposition();
     updateKeyboard(gameState.keyboardState);
@@ -82,6 +85,19 @@ function initializeGame() {
             localStorage.setItem('longblack-wordle-visited', 'true');
         }, 500);
     }
+}
+
+// 카운트다운 타이머 시작
+function startCountdown() {
+    const countdownElement = document.getElementById('countdown');
+
+    function updateTimer() {
+        const { hours, minutes, seconds } = getTimeUntilNextWord();
+        countdownElement.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    updateTimer();
+    setInterval(updateTimer, 1000);
 }
 
 // 한글 조합 처리
@@ -227,7 +243,7 @@ function handlePhysicalKeyPress(e) {
         handleKeyPress('Enter');
     } else if (e.key === 'Backspace') {
         handleKeyPress('Backspace');
-    } else if (/^[ㄱ-ㅎㅏ-ㅣ]$/.test(e.key)) {
+    } else if (/^[ㄱ-ㅎㅏ-ㅣ가-힣]$/.test(e.key)) {
         handleKeyPress(e.key);
     }
 }

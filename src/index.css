@@ -168,6 +168,50 @@ button {
     }
 }
 
+/* 타이머 섹션 */
+.timer-section {
+    width: 100%;
+    background-color: var(--color-text);
+    color: var(--color-bg);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.timer-label {
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.8;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.countdown {
+    font-size: 36px;
+    font-weight: 700;
+    font-family: 'Courier New', Courier, monospace;
+    /* 디지털 시계 느낌 */
+    margin-bottom: 8px;
+    color: #FFD43B;
+    /* 포인트 컬러 */
+}
+
+.timer-info {
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0.7;
+    letter-spacing: -0.2px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .timer-section {
+        background-color: #1A1A1B;
+        border: 1px solid #3A3A3C;
+    }
+}
+
 /* 힌트 */
 .hint-section {
     width: 100%;
@@ -364,8 +408,22 @@ button {
 }
 
 .key.wide {
-    min-width: 65px;
+    min-width: 50px;
+    flex: 1.5;
     font-size: 12px;
+}
+
+.key.shift-key.active {
+    background-color: var(--color-text);
+    color: var(--color-bg);
+    transform: translateY(1px);
+}
+
+.key.enter-key {
+    background-color: var(--color-correct);
+    color: white;
+    margin-top: 4px;
+    flex: 2;
 }
 
 .key.correct {
