@@ -73,6 +73,20 @@ function animateRow(rowIndex, animation) {
 }
 
 function showHint(wordLength, description) {
+    const wordCountHint = document.getElementById('word-count-hint');
+    const extraHintText = document.getElementById('extra-hint-text');
+
+    if (wordCountHint) {
+        wordCountHint.textContent = `${wordLength}글자 단어`;
+    }
+
+    if (extraHintText) {
+        extraHintText.textContent = description;
+    }
+
+    // 기본 힌트 영역은 비웁니다. 사용자가 '추가 힌트보기'를 누르면 모달로 보여줍니다.
     const hint = document.getElementById('hint');
-    hint.innerHTML = `정답은 <strong>${wordLength}글자</strong>입니다.<br>${description}`;
+    if (hint) {
+        hint.innerHTML = '힌트 문장이 필요하면 아래 버튼을 눌러보세요.';
+    }
 }

@@ -7,9 +7,10 @@
     --color-border-focus: #1A1A1B;
 
     /* 롱블랙 시그니처 & 게임 피드백 컬러 */
-    --color-correct: #00462A;
-    /* 롱블랙 딥 그린 */
-    --color-present: #C9B458;
+    --color-correct: #FF4B22;
+    /* 정답 위치 */
+    --color-present: #D6B38E;
+    /* 위치 틀린 정답 */
     --color-absent: #787C7E;
     --color-empty: #FFFFFF;
 
@@ -237,6 +238,51 @@ button {
     font-weight: 500;
 }
 
+.word-count-hint {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    margin-bottom: 4px;
+}
+
+.extra-hint-btn {
+    margin-top: 12px;
+    padding: 8px 16px;
+    background-color: #F0F0F0;
+    border: 1px solid #D1D1D1;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    transition: all 0.2s;
+}
+
+.extra-hint-btn:hover {
+    background-color: #E0E0E0;
+    transform: translateY(-1px);
+}
+
+.extra-hint-content {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.hint-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-correct);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.extra-hint-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text);
+    line-height: 1.5;
+    word-break: keep-all;
+}
+
 /* 게임 보드 */
 #game-board {
     display: flex;
@@ -417,8 +463,8 @@ button {
 }
 
 .key.enter-key {
-    background-color: #00462A;
-    /* 엔터도 롱블랙 그린 */
+    background-color: #FF4B22;
+    /* 입력 버튼 색상 */
     color: white;
     flex: 2;
 }

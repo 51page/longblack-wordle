@@ -145,7 +145,7 @@ function checkGameEnd(guesses, answer, maxGuesses = 6) {
 
 // 공유 텍스트 생성
 function generateShareText(guesses, evaluations, wordLength, gameNumber) {
-    const title = `롱블랙 단어 맞추기 ${gameNumber}`;
+    const title = `롱블랙 문장 퍼즐 ${gameNumber}`;
     const result = guesses.length <= 6 ? `${guesses.length}/6` : 'X/6';
 
     let grid = '';

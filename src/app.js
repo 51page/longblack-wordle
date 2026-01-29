@@ -60,7 +60,7 @@ function initializeGame() {
     createKeyboard(handleKeyPress);
     initializeModals();
 
-    // 힌트 표시 (단어 설명 포함)
+    // 힌트 표시 (글자 수 표시)
     showHint(wordLength, todayWordData.description);
 
     // 타이머 시작
@@ -325,6 +325,30 @@ function handleGameEnd() {
                 : '성공!';
             showMessage(message, 3000);
 
+            // 폭죽 효과 (폭죽 라이브러리 호출)
+            if (window.confetti) {
+                const duration = 3 * 1000;
+                const animationEnd = Date.now() + duration;
+                const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 3000 };
+
+                function randomInRange(min, max) {
+                    return Math.random() * (max - min) + min;
+                }
+
+                const interval = setInterval(function () {
+                    const timeLeft = animationEnd - Date.now();
+
+                    if (timeLeft <= 0) {
+                        return clearInterval(interval);
+                    }
+
+                    const particleCount = 50 * (timeLeft / duration);
+                    // since particles fall down, start a bit higher than random
+                    window.confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                    window.confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+                }, 250);
+            }
+
             // 결과 모달 표시 (성공 시)
             setTimeout(() => {
                 showResultModal();
@@ -349,6 +373,9 @@ function showResultModal() {
     const todayWordData = getTodayWord();
 
     // 모달 텍스트 및 링크 업데이트
+    document.getElementById('result-title').textContent = '대단해요! 정답을 맞추셨습니다.';
+    document.getElementById('result-message').textContent = '오늘의 문제 노트를 읽어보시고 의지력을 키워보세요!';
+
     document.getElementById('result-note-title').textContent = todayWordData.original || todayWordData.word;
     document.getElementById('result-note-desc').textContent = todayWordData.description;
 

@@ -9,18 +9,20 @@
     <meta property="og:title" content="롱블랙 단어 맞추기">
     <meta property="og:description" content="매일 새로운 롱블랙 노트 제목을 맞춰보세요">
     <meta property="og:type" content="website">
-    <title>롱블랙 단어 맞추기</title>
+    <title>롱블랙 문장 퍼즐</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./src/index.css">
+    <!-- 폭죽 효과를 위한 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 
 <body>
     <div id="app">
         <header id="header">
             <div class="header-content">
-                <h1 class="logo">롱블랙 단어 맞추기</h1>
+                <h1 class="logo">롱블랙 문장 퍼즐</h1>
                 <div class="header-buttons">
                     <button id="stats-btn" class="icon-btn" aria-label="통계">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -51,7 +53,9 @@
             </div>
             <div id="hint-section" class="hint-section">
                 <h3 class="hint-title">💡 오늘의 힌트</h3>
+                <div id="word-count-hint" class="word-count-hint"></div>
                 <div id="hint" class="hint"></div>
+                <button id="extra-hint-btn" class="extra-hint-btn">추가 힌트보기</button>
             </div>
             <div id="game-board"></div>
             <div id="keyboard"></div>
@@ -101,6 +105,22 @@
                 </div>
 
                 <p class="note">매일 자정에 새로운 단어가 공개됩니다!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 추가 힌트 모달 -->
+    <div id="extra-hint-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>추가 힌트</h2>
+                <button class="close-btn" data-modal="extra-hint">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="extra-hint-content">
+                    <p class="hint-label">💡 문장 힌트</p>
+                    <div id="extra-hint-text" class="extra-hint-text"></div>
+                </div>
             </div>
         </div>
     </div>

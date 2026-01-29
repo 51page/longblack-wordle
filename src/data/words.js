@@ -1,5 +1,6 @@
 // 롱블랙 노트 제목, 힌트, URL 데이터
 const WORDS_DATA = [
+    { word: '의지력', original: '가짜 ADHD : 우리는 왜 자신의 집중력에 만족하지 못할까?', description: '배터리처럼 쓰면 닳는 유한한 자원이니, 이것에 기대지 말고 구조를 바꾸세요.', url: 'https://longblack.co/note/1859' },
     { word: '찰스핸디', original: '찰스 핸디', description: '다정한 경영철학자, 포트폴리오 인생', url: 'https://longblack.co/note/1118' },
     { word: '곽민수', original: '곽민수', description: '이집트 고고학자, 대세감 만드는 법', url: 'https://longblack.co/note/1116' },
     { word: '이하성', original: '이하성', description: '타협하지 않는 셰프, 요리 괴물의 성장', url: 'https://longblack.co/note/1113' },
@@ -56,16 +57,16 @@ const WORDS_DATA = [
     { word: '남궁인', original: '남궁인', description: '응급실을 지키는 의사, 생의 간절한 의지', url: 'https://longblack.co/note/1005' }
 ];
 
-// 전체 단어를 유효 단어로 사용
-const VALID_WORDS = WORDS_DATA;
+// 3~5글자 단어만 필터링하여 사용
+const VALID_WORDS = WORDS_DATA.filter(item => item.word.length >= 3 && item.word.length <= 5);
 
 // 날짜 기반 시드로 오늘의 단어 선택
 function getTodayWord() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // 시작일 설정 (2026-01-28)
-    const startDate = new Date('2026-01-28');
+    // 시작일 설정 (2026-01-29)
+    const startDate = new Date('2026-01-29');
     startDate.setHours(0, 0, 0, 0);
 
     const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
