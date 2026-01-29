@@ -36,15 +36,29 @@ function loadGameState() {
 
 // 통계 저장
 function saveStatistics(stats) {
-    try {
-        localStorage.setItem(STORAGE_KEYS.STATISTICS, JSON.stringify(stats));
-    } catch (e) {
-        console.error('Failed to save statistics:', e);
+    // 로그인 상태일 때만 로컬 스토리지에 저장
+    if (typeof firebase !== 'undefined' && firebase.auth().currentUser) {
+        try {
+            localStorage.setItem(STORAGE_KEYS.STATISTICS, JSON.stringify(stats));
+        } catch (e) {
+            console.error('Failed to save statistics:', e);
+        }
     }
 }
 
 // 통계 불러오기
 function loadStatistics() {
+    // 로그인 상태가 아니면 빈 통계를 반환하여 기록을 표시하지 않음
+    if (typeof firebase === 'undefined' || !firebase.auth().currentUser) {
+        return {
+            played: 0,
+            won: 0,
+            currentStreak: 0,
+            maxStreak: 0,
+            guessDistribution: [0, 0, 0, 0, 0]
+        };
+    }
+
     try {
         const saved = localStorage.getItem(STORAGE_KEYS.STATISTICS);
         if (!saved) {
@@ -53,7 +67,7 @@ function loadStatistics() {
                 won: 0,
                 currentStreak: 0,
                 maxStreak: 0,
-                guessDistribution: [0, 0, 0, 0, 0, 0]
+                guessDistribution: [0, 0, 0, 0, 0]
             };
         }
         return JSON.parse(saved);
@@ -64,7 +78,7 @@ function loadStatistics() {
             won: 0,
             currentStreak: 0,
             maxStreak: 0,
-            guessDistribution: [0, 0, 0, 0, 0, 0]
+            guessDistribution: [0, 0, 0, 0, 0]
         };
     }
 }
@@ -79,7 +93,7 @@ function updateStatistics(won, guessCount) {
         stats.won++;
         stats.currentStreak++;
         stats.maxStreak = Math.max(stats.maxStreak, stats.currentStreak);
-        if (guessCount >= 1 && guessCount <= 6) {
+        if (guessCount >= 1 && guessCount <= 5) {
             stats.guessDistribution[guessCount - 1]++;
         }
     } else {

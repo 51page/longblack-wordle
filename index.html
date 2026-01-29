@@ -47,6 +47,14 @@
                 </div>
                 <h1 class="logo">롱블랙 문장 퍼즐</h1>
                 <div class="header-buttons">
+                    <button id="hint-btn" class="icon-btn" aria-label="힌트">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M12 2v8M12 14v2M12 20v2M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h8M14 12h8M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                    </button>
                     <button id="stats-btn" class="icon-btn" aria-label="통계">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -74,12 +82,6 @@
                 <div id="countdown" class="countdown">00:00:00</div>
                 <div class="timer-info">하루 한 문제만 풀 수 있어요. 이 문제는 곧 사라집니다.</div>
             </div>
-            <div id="hint-section" class="hint-section">
-                <h3 class="hint-title">💡 오늘의 힌트</h3>
-                <div id="word-count-hint" class="word-count-hint"></div>
-                <div id="hint" class="hint"></div>
-                <button id="extra-hint-btn" class="extra-hint-btn">추가 힌트보기</button>
-            </div>
             <div id="game-board"></div>
             <div id="keyboard"></div>
         </main>
@@ -93,11 +95,29 @@
                 <button class="close-btn" data-modal="help">&times;</button>
             </div>
             <div class="modal-body">
-                <p>롱블랙 노트에서 나온 제목을 5번 안에 맞춰보세요!</p>
-
-                <p><strong>한글 입력 방법:</strong></p>
-                <p>키보드의 자음과 모음을 눌러 한 글자씩 조합합니다.<br>
-                    예: ㅂ → ㅡ → ㄹ → ㅐ → ㄴ → ㄷ = "브랜드"</p>
+                <div class="help-instructions">
+                    <div class="instruction-item">
+                        <div class="instruction-icon">🔖</div>
+                        <div class="instruction-text">
+                            <strong>오늘의 문장</strong>
+                            <span>롱블랙 노트에서 발췌한 영감 넘치는 문장을 맞춰보세요.</span>
+                        </div>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="instruction-icon">🎯</div>
+                        <div class="instruction-text">
+                            <strong>5번의 기회</strong>
+                            <span>매일 새로운 문제가 제공되며, 단 5번 안에 정답을 찾아보세요.</span>
+                        </div>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="instruction-icon">🔐</div>
+                        <div class="instruction-text">
+                            <strong>나만의 기록</strong>
+                            <span>로그인 시 나의 정답 기록과 실시간 랭킹을 확인할 수 있습니다.</span>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="example">
                     <p><strong>색상 의미:</strong></p>
@@ -136,13 +156,20 @@
     <div id="extra-hint-modal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>추가 힌트</h2>
+                <h2>오늘 문장 힌트</h2>
                 <button class="close-btn" data-modal="extra-hint">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="extra-hint-content">
-                    <p class="hint-label">💡 문장 힌트</p>
                     <div id="extra-hint-text" class="extra-hint-text"></div>
+
+                    <div id="hint-note-info" class="hint-note-section">
+                        <div class="divider"></div>
+                        <p class="section-label">정답이 담긴 롱블랙 노트</p>
+                        <h3 id="hint-note-title" class="hint-note-title"></h3>
+                        <a id="hint-note-link" href="#" target="_blank" class="read-note-btn primary-btn">노트 읽으러 가기
+                            →</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -156,6 +183,7 @@
                 <button class="close-btn" data-modal="stats">&times;</button>
             </div>
             <div class="modal-body">
+                <div id="stats-login-msg" class="stats-login-msg hidden">로그인 후 게임에 참여하면 통계가 누적됩니다.</div>
                 <div class="stats-grid">
                     <div class="stat-item">
                         <div class="stat-value" id="stat-played">0</div>
@@ -211,15 +239,21 @@
                     <p id="result-message">정답을 맞추셨습니다!</p>
                 </div>
 
+                <div class="participation-stats-card">
+                    <p>(현재 기준) 오늘 <span class="highlight-num">5,689명</span>이 문장 퍼즐에 참여해주셨고, 정답을 맞춘 분들은 <span
+                            class="highlight-num">2,675명</span>이에요.</p>
+                </div>
+
                 <div class="note-info-card">
                     <div class="note-tag">오늘의 롱블랙 노트</div>
                     <h3 id="result-note-title" class="note-title"></h3>
                     <p id="result-note-desc" class="note-desc"></p>
-                    <a id="result-note-link" href="#" target="_blank" class="read-note-btn">롱블랙 노트 보러가기 →</a>
+                    <a id="result-note-link" href="#" target="_blank" class="read-note-btn primary-btn">롱블랙 노트 보러가기
+                        →</a>
                 </div>
 
                 <div class="result-actions">
-                    <button id="result-share-btn" class="share-btn highlight">결과 공유하기</button>
+                    <button id="result-share-btn" class="share-btn outline-btn">결과 공유하기</button>
                     <div id="result-next-timer" class="next-word-info"></div>
                 </div>
             </div>

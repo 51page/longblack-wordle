@@ -74,9 +74,12 @@ button {
 
 /* 헤더 */
 #header {
-    border-bottom: 1px solid var(--color-border);
+    background-color: #1A1A1B;
+    /* 진한 그레이로 변경 */
+    border-bottom: 1px solid #3A3A3C;
     padding: 0 16px;
-    height: 60px;
+    height: 64px;
+    /* 조금 더 여유있게 높이 조절 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -94,6 +97,8 @@ button {
     font-size: var(--font-size-large);
     font-weight: 700;
     letter-spacing: -0.5px;
+    color: #FFFFFF;
+    /* 로고 색상 화이트로 */
 }
 
 .header-buttons {
@@ -112,18 +117,18 @@ button {
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
-    border: 1px solid var(--color-border);
+    border: 1px solid #3A3A3C;
     border-radius: 20px;
     font-size: 13px;
     font-weight: 600;
-    color: var(--color-text);
-    background-color: var(--color-bg);
+    color: #FFFFFF;
+    background-color: #2C2C2E;
     transition: all var(--transition-fast);
 }
 
 .login-btn:hover {
-    background-color: #f8f9fa;
-    border-color: var(--color-text);
+    background-color: #3A3A3C;
+    border-color: #FFFFFF;
 }
 
 .login-btn svg {
@@ -148,7 +153,7 @@ button {
 .user-profile span {
     font-size: 13px;
     font-weight: 600;
-    color: var(--color-text);
+    color: #FFFFFF;
 }
 
 .hidden {
@@ -162,12 +167,13 @@ button {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    color: var(--color-text);
+    color: #FFFFFF;
+    /* 아이콘 색상 화이트로 */
     transition: background-color var(--transition-fast);
 }
 
 .icon-btn:hover {
-    background-color: var(--color-border);
+    background-color: #3A3A3C;
 }
 
 /* 메인 게임 영역 */
@@ -332,11 +338,20 @@ button {
 }
 
 .extra-hint-text {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--color-text);
-    line-height: 1.5;
+    font-size: 20px;
+    /* 기존 18px에서 상향 */
+    font-weight: 400;
+    /* 볼드 삭제 */
+    color: #1A1A1B;
+    line-height: 1.6;
     word-break: keep-all;
+    padding: 20px 0;
+    text-align: left;
+    /* 왼쪽 정렬 */
+    text-decoration: underline;
+    /* 밑줄 추가 */
+    text-underline-offset: 4px;
+    /* 밑줄 가독성 향상 */
 }
 
 /* 게임 보드 */
@@ -690,6 +705,74 @@ button {
     padding: 24px;
 }
 
+.stats-login-msg {
+    background-color: #FFF5F5;
+    border: 1px solid #FFE3E3;
+    color: #FF4B22;
+    /* 포인트 컬러 */
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 24px;
+    word-break: keep-all;
+}
+
+/* 도움말 모달 지침 */
+.help-instructions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.instruction-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    background-color: #F8F9FA;
+    border-radius: 12px;
+    transition: transform 0.2s ease;
+}
+
+.instruction-item:hover {
+    transform: translateX(4px);
+}
+
+.instruction-icon {
+    font-size: 24px;
+    width: 44px;
+    height: 44px;
+    background-color: #FFFFFF;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+}
+
+.instruction-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.instruction-text strong {
+    font-size: 15px;
+    font-weight: 800;
+    color: #1A1A1B;
+}
+
+.instruction-text span {
+    font-size: 13px;
+    color: #6E6E6E;
+    line-height: 1.5;
+    word-break: keep-all;
+}
+
 /* 도움말 모달 */
 .example {
     margin: 24px 0;
@@ -907,22 +990,26 @@ button {
 .share-btn {
     width: 100%;
     padding: 16px;
-    background-color: #00462A;
-    /* 롱블랙 딥 그린 */
-    color: white;
     border-radius: 8px;
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     transition: all var(--transition-fast);
+    border: none;
 }
 
-.share-btn:hover {
-    filter: brightness(1.2);
+.share-btn.outline-btn {
+    background-color: transparent;
+    color: #4A4A4A;
+    border: 1px solid #D3D6DA;
+    margin-bottom: 8px;
 }
 
-.share-btn:active {
-    transform: scale(0.98);
+.share-btn.outline-btn:hover {
+    background-color: #F8F9FA;
+    border-color: #1A1A1B;
+    color: #1A1A1B;
+    filter: none;
 }
 
 .next-word-info {
@@ -982,7 +1069,34 @@ button {
 
 .result-summary {
     text-align: center;
-    margin-bottom: 16px;
+    margin-bottom: 24px;
+}
+
+.participation-stats-card {
+    background-color: #F0F4F2;
+    /* 연한 그린빛 배경 */
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 24px;
+    text-align: center;
+    border: 1px solid #DCE5E0;
+}
+
+.participation-stats-card p {
+    font-size: 14px;
+    color: #4A4A4A;
+    line-height: 1.6;
+    word-break: keep-all;
+}
+
+.highlight-num {
+    font-weight: 800;
+    color: #00462A;
+    /* 롱블랙 메인 그린 */
+    font-size: 17px;
+    margin: 0 2px;
+    border-bottom: 2px solid #00462A33;
+    /* 연한 밑줄 강조 */
 }
 
 .note-info-card {
@@ -1025,9 +1139,6 @@ button {
 .read-note-btn {
     display: inline-block;
     width: 100%;
-    background-color: #00462A;
-    /* 롱블랙 딥 그린 */
-    color: white;
     text-align: center;
     padding: 16px;
     border-radius: 8px;
@@ -1035,6 +1146,12 @@ button {
     text-decoration: none;
     font-size: 15px;
     transition: all var(--transition-fast);
+    border: none;
+}
+
+.read-note-btn.primary-btn {
+    background-color: #00462A;
+    color: white;
 }
 
 .read-note-btn:hover {
@@ -1044,9 +1161,39 @@ button {
 
 .result-actions {
     text-align: center;
+    margin-top: 24px;
 }
 
 .share-btn.highlight {
     background-color: #00462A;
     color: white;
+}
+
+/* 추가 힌트 모달 내 노트 정보 */
+.hint-note-section {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.hint-note-section .divider {
+    height: 1px;
+    background-color: #E5E5E5;
+    margin-bottom: 24px;
+}
+
+.hint-note-section .section-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #6E6E6E;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 8px;
+}
+
+.hint-note-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1A1A1B;
+    margin-bottom: 20px;
+    line-height: 1.4;
 }

@@ -99,7 +99,7 @@ function animateRow(rowIndex, animation) {
     }
 }
 
-function showHint(wordLength, description) {
+function showHint(wordLength, wordData) {
     const wordCountHint = document.getElementById('word-count-hint');
     const extraHintText = document.getElementById('extra-hint-text');
 
@@ -109,7 +109,18 @@ function showHint(wordLength, description) {
     }
 
     if (extraHintText) {
-        extraHintText.textContent = description;
+        extraHintText.textContent = wordData.description;
+    }
+
+    // 힌트 모달 내 롱블랙 노트 정보 채우기
+    const hintNoteTitle = document.getElementById('hint-note-title');
+    const hintNoteLink = document.getElementById('hint-note-link');
+
+    if (hintNoteTitle) {
+        hintNoteTitle.textContent = wordData.original || wordData.word;
+    }
+    if (hintNoteLink) {
+        hintNoteLink.href = wordData.url;
     }
 
     // 기본 힌트 영역 텍스트 변경

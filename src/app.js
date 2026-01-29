@@ -62,7 +62,7 @@ function initializeGame() {
     initAuth(); // 인증 로직 초기화
 
     // 힌트 표시 (글자 수 표시)
-    showHint(wordLength, todayWordData.description);
+    showHint(wordLength, todayWordData);
 
     // 타이머 시작
     startCountdown();
@@ -166,6 +166,15 @@ function handleKoreanInput(key) {
     return true;
 }
 
+// 영어 입력 처리
+function handleEnglishInput(key) {
+    if (gameState.currentGuess.length < gameState.wordLength) {
+        gameState.currentGuess.push(key.toUpperCase());
+        return true;
+    }
+    return false;
+}
+
 // 백스페이스 처리
 function handleBackspace() {
     const { cho, jung, jong } = gameState.currentInput;
@@ -230,7 +239,8 @@ function handleKeyPress(key) {
         updateBoardWithComposition();
         saveCurrentState();
     } else {
-        const success = handleKoreanInput(key);
+        const isEnglish = /^[a-zA-Z]$/.test(key);
+        const success = isEnglish ? handleEnglishInput(key) : handleKoreanInput(key);
         if (success) {
             updateBoardWithComposition();
             saveCurrentState();
@@ -247,7 +257,7 @@ function handlePhysicalKeyPress(e) {
         handleKeyPress('Enter');
     } else if (e.key === 'Backspace') {
         handleKeyPress('Backspace');
-    } else if (/^[ㄱ-ㅎㅏ-ㅣ가-힣]$/.test(e.key)) {
+    } else if (/^[ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]$/.test(e.key)) {
         handleKeyPress(e.key);
     }
 }

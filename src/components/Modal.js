@@ -11,7 +11,7 @@ function initializeModals() {
         updateStatsDisplay();
     });
 
-    document.getElementById('extra-hint-btn').addEventListener('click', () => {
+    document.getElementById('hint-btn').addEventListener('click', () => {
         openModal('extra-hint');
     });
 
@@ -52,6 +52,16 @@ function closeModal(modalName) {
 
 function updateStatsDisplay() {
     const stats = loadStatistics();
+    const isLoggedIn = typeof firebase !== 'undefined' && firebase.auth().currentUser;
+    const loginMsg = document.getElementById('stats-login-msg');
+
+    if (loginMsg) {
+        if (!isLoggedIn) {
+            loginMsg.classList.remove('hidden');
+        } else {
+            loginMsg.classList.add('hidden');
+        }
+    }
 
     document.getElementById('stat-played').textContent = stats.played;
 

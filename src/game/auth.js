@@ -91,19 +91,13 @@ async function syncUserData(uid) {
                 won: Math.max(localStats.won, serverStats.won || 0),
                 currentStreak: Math.max(localStats.currentStreak, serverStats.currentStreak || 0),
                 maxStreak: Math.max(localStats.maxStreak, serverStats.maxStreak || 0),
-                guessDistribution: serverStats.guessDistribution || localStats.guessDistribution || [0, 0, 0, 0, 0, 0]
+                guessDistribution: serverStats.guessDistribution || localStats.guessDistribution || [0, 0, 0, 0, 0]
             };
 
             saveStatistics(mergedStats);
             if (typeof updateStatsDisplay === 'function') updateStatsDisplay();
-        } else {
-            await docRef.set({
-                displayName: auth.currentUser.displayName,
-                photoURL: auth.currentUser.photoURL,
-                stats: localStats,
-                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-            });
         }
+        // 기본 정보 업데이트 (항상 실행)
         await docRef.set({
             displayName: auth.currentUser.displayName,
             photoURL: auth.currentUser.photoURL,

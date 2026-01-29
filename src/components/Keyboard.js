@@ -1,42 +1,45 @@
 // 한글 키보드 컴포넌트 - 표준 한글 자판 배열 (Shift 지원)
 
-const KEYBOARD_LAYOUT = [
+const HANGUL_LAYOUT = [
     ['ㅂ', 'ㅈ', 'ㄷ', 'ㄱ', 'ㅅ', 'ㅛ', 'ㅕ', 'ㅑ', 'ㅐ', 'ㅔ'],
     ['ㅁ', 'ㄴ', 'ㅇ', 'ㄹ', 'ㅎ', 'ㅗ', 'ㅓ', 'ㅏ', 'ㅣ'],
     ['SHIFT', 'ㅋ', 'ㅌ', 'ㅊ', 'ㅍ', 'ㅠ', 'ㅜ', 'ㅡ', 'BACK'],
-    ['ENTER'] // 엔터를 독립된 마지막 줄 혹은 레이아웃에 맞춰 배치
+    ['LANG', 'ENTER']
 ];
 
-// 엔터 위치 조정을 위해 레이아웃 재구성
-const FINAL_LAYOUT = [
-    ['ㅂ', 'ㅈ', 'ㄷ', 'ㄱ', 'ㅅ', 'ㅛ', 'ㅕ', 'ㅑ', 'ㅐ', 'ㅔ'],
-    ['ㅁ', 'ㄴ', 'ㅇ', 'ㄹ', 'ㅎ', 'ㅗ', 'ㅓ', 'ㅏ', 'ㅣ'],
-    ['SHIFT', 'ㅋ', 'ㅌ', 'ㅊ', 'ㅍ', 'ㅠ', 'ㅜ', 'ㅡ', 'BACK'],
-    ['ENTER']
+const ENGLISH_LAYOUT = [
+    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+    ['SHIFT', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'BACK'],
+    ['LANG', 'ENTER']
 ];
 
-// 쌍자음/복합모음 매핑
 const SHIFT_MAP = {
     'ㅂ': 'ㅃ', 'ㅈ': 'ㅉ', 'ㄷ': 'ㄸ', 'ㄱ': 'ㄲ', 'ㅅ': 'ㅆ',
     'ㅐ': 'ㅒ', 'ㅔ': 'ㅖ',
-    'ㅃ': 'ㅂ', 'ㅉ': 'ㅈ', 'ㄸ': 'ㄷ', 'ㄲ': 'ㄱ', 'ㅆ': 'ㅅ',
-    'ㅒ': 'ㅐ', 'ㅖ': 'ㅔ'
 };
 
+// 역매핑도 필요함
+Object.keys(SHIFT_MAP).forEach(key => {
+    SHIFT_MAP[SHIFT_MAP[key]] = key;
+});
+
 let isShiftActive = false;
+let currentLanguage = 'KOR'; // 'KOR' or 'ENG'
 
 function createKeyboard(onKeyPress) {
     const keyboard = document.getElementById('keyboard');
     keyboard.innerHTML = '';
 
-    FINAL_LAYOUT.forEach(row => {
+    const layout = currentLanguage === 'KOR' ? HANGUL_LAYOUT : ENGLISH_LAYOUT;
+
+    layout.forEach(row => {
         const rowElement = document.createElement('div');
         rowElement.className = 'keyboard-row';
 
         row.forEach(key => {
             const keyElement = document.createElement('button');
             keyElement.className = 'key';
-            keyElement.dataset.key = key;
 
             if (key === 'ENTER') {
                 keyElement.textContent = '입력';
@@ -50,17 +53,23 @@ function createKeyboard(onKeyPress) {
                 keyElement.textContent = '⇧';
                 keyElement.classList.add('wide', 'shift-key');
                 keyElement.dataset.key = 'Shift';
+            } else if (key === 'LANG') {
+                keyElement.textContent = currentLanguage === 'KOR' ? '한/A' : 'A/한';
+                keyElement.classList.add('wide', 'lang-key');
+                keyElement.dataset.key = 'Lang';
             } else {
                 keyElement.textContent = key;
                 keyElement.dataset.key = key;
             }
 
             keyElement.addEventListener('click', () => {
-                if (keyElement.dataset.key === 'Shift') {
+                const keyValue = keyElement.dataset.key;
+                if (keyValue === 'Shift') {
                     toggleShift();
+                } else if (keyValue === 'Lang') {
+                    toggleLanguage(onKeyPress);
                 } else {
-                    onKeyPress(keyElement.dataset.key);
-                    // 글자 입력 후에는 자동으로 Shift 해제 (일반적인 한글 입력기 방식)
+                    onKeyPress(keyValue);
                     if (isShiftActive) toggleShift();
                 }
             });
@@ -72,6 +81,12 @@ function createKeyboard(onKeyPress) {
     });
 }
 
+function toggleLanguage(onKeyPress) {
+    currentLanguage = currentLanguage === 'KOR' ? 'ENG' : 'KOR';
+    isShiftActive = false;
+    createKeyboard(onKeyPress);
+}
+
 function toggleShift() {
     isShiftActive = !isShiftActive;
     const shiftBtn = document.querySelector('.shift-key');
@@ -79,15 +94,28 @@ function toggleShift() {
         shiftBtn.classList.toggle('active', isShiftActive);
     }
 
-    const keys = document.querySelectorAll('.key');
-    keys.forEach(keyElement => {
-        const currentKey = keyElement.dataset.key;
-        if (SHIFT_MAP[currentKey]) {
-            const newKey = SHIFT_MAP[currentKey];
-            keyElement.textContent = newKey;
-            keyElement.dataset.key = newKey;
-        }
-    });
+    if (currentLanguage === 'KOR') {
+        const keys = document.querySelectorAll('.key');
+        keys.forEach(keyElement => {
+            const currentKey = keyElement.dataset.key;
+            if (SHIFT_MAP[currentKey]) {
+                const newKey = SHIFT_MAP[currentKey];
+                keyElement.textContent = newKey;
+                keyElement.dataset.key = newKey;
+            }
+        });
+    } else {
+        // 영어의 경우 대소문자 변환
+        const keys = document.querySelectorAll('.key');
+        keys.forEach(keyElement => {
+            const char = keyElement.dataset.key;
+            if (char.length === 1 && /[a-zA-Z]/.test(char)) {
+                const newKey = isShiftActive ? char.toUpperCase() : char.toLowerCase();
+                keyElement.textContent = newKey;
+                keyElement.dataset.key = newKey;
+            }
+        });
+    }
 }
 
 function updateKeyboard(keyboardState) {
@@ -95,7 +123,7 @@ function updateKeyboard(keyboardState) {
 
     keys.forEach(key => {
         const char = key.dataset.key;
-        if (['Enter', 'Backspace', 'Shift'].includes(char)) return;
+        if (['Enter', 'Backspace', 'Shift', 'Lang'].includes(char)) return;
 
         const state = keyboardState[char];
         if (state) {
