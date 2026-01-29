@@ -61,11 +61,19 @@ function initializeGame() {
     initializeModals();
     initAuth(); // 인증 로직 초기화
 
-    // 힌트 표시 (글자 수 표시)
-    showHint(wordLength, todayWordData);
+    // 문장 표시 (ADHD 등 정답 부분은 빈칸 처리)
+    const sentenceDisplay = document.getElementById('sentence-display');
+    if (sentenceDisplay && todayWordData.sentence) {
+        // 정답 부분을 빈칸으로 시각화
+        const hiddenSentence = todayWordData.sentence.replace(
+            /<span class="sentence-blank">.*?<\/span>/,
+            '<span class="sentence-blank">&nbsp;&nbsp;&nbsp;&nbsp;</span>'
+        );
+        sentenceDisplay.innerHTML = hiddenSentence;
+    }
 
-    // 타이머 시작
-    startCountdown();
+    // 힌트 데이터 전달 (추후 힌트 모달에 사용)
+    showHint(wordLength, todayWordData);
 
     // 보드 업데이트
     updateBoardWithComposition();
@@ -262,8 +270,13 @@ function handlePhysicalKeyPress(e) {
     }
 }
 
+// 입력 제어용 플래그 (애니메이션/피드백 중 입력 방지)
+let isProcessing = false;
+
 // 추측 제출
-function submitGuess() {
+async function submitGuess() {
+    if (isProcessing) return;
+
     // 조합 중인 글자가 있으면 완성
     const { cho, jung, jong } = gameState.currentInput;
     if (cho && jung) {
@@ -279,18 +292,23 @@ function submitGuess() {
     // 유효성 검사
     if (guess.length !== gameState.wordLength) {
         showMessage('글자 수가 맞지 않습니다');
-        animateRow(gameState.guesses.length, 'shake');
+        animateRow(0, 'shake');
         return;
     }
 
-    // 완성된 한글인지 확인
-    for (let char of guess) {
-        if (!isCompleteHangul(char)) {
-            showMessage('완성된 글자를 입력해주세요');
-            animateRow(gameState.guesses.length, 'shake');
-            return;
+    // 완성된 한글인지 확인 (영어 ADHD 예외 처리 포함)
+    const isEnglishAnswer = /^[a-zA-Z]+$/.test(gameState.answer);
+    if (!isEnglishAnswer) {
+        for (let char of guess) {
+            if (!isCompleteHangul(char)) {
+                showMessage('완성된 글자를 입력해주세요');
+                animateRow(0, 'shake');
+                return;
+            }
         }
     }
+
+    isProcessing = true;
 
     // 추측 평가
     const evaluation = evaluateGuess(guess, gameState.answer);
@@ -299,16 +317,37 @@ function submitGuess() {
     gameState.guesses.push(guess);
     gameState.evaluations.push(evaluation);
     updateKeyboardState(guess, evaluation, gameState.keyboardState);
-    gameState.currentGuess = [];
-    gameState.currentInput = { cho: '', jung: '', jong: '' };
 
-    // UI 업데이트
+    // UI 업데이트 (결과 색상 노출)
     updateBoardWithComposition();
-    animateRow(gameState.guesses.length - 1, 'flip');
+    animateRow(0, 'flip');
 
-    setTimeout(() => {
+    // 2초간 결과 보여주기
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    if (guess === gameState.answer) {
+        // 정답일 경우 문장에 정답 채워 넣기
+        const sentenceDisplay = document.getElementById('sentence-display');
+        const todayWordData = getTodayWord();
+        if (sentenceDisplay) {
+            sentenceDisplay.innerHTML = todayWordData.sentence;
+        }
+    } else {
+        // 틀렸을 경우 다시 빈칸으로 (currentGuess 초기화)
+        gameState.currentGuess = [];
+        gameState.currentInput = { cho: '', jung: '', jong: '' };
+
+        // 키보드 색상 반영
         updateKeyboard(gameState.keyboardState);
-    }, 300);
+
+        if (gameState.guesses.length < 5) {
+            showMessage('틀렸습니다. 다시 시도해보세요!', 1000);
+        }
+    }
+
+    // 보드 상태 최종 업데이트
+    updateBoardWithComposition();
+    isProcessing = false;
 
     // 게임 종료 확인
     const result = checkGameEnd(gameState.guesses, gameState.answer);
@@ -316,11 +355,10 @@ function submitGuess() {
         gameState.gameStatus = result.status;
         setTimeout(() => {
             handleGameEnd();
-        }, 1500);
+        }, 500);
     }
 
     saveCurrentState();
-    archiveGameResult(); // 서버에 상태 아카이빙 신청
 }
 
 // 게임 종료 처리

@@ -1,5 +1,12 @@
 // 롱블랙 노트 제목, 힌트, URL 데이터
 const WORDS_DATA = [
+    {
+        word: 'ADHD',
+        original: '가짜 ADHD : 우리는 왜 자신의 집중력에 만족하지 못할까?',
+        description: '모든 문제를 ADHD 탓으로 돌려선 안 됩니다. 사실 복잡한 사회에서 아무런 어려움 없이 온전히 집중하며 사는 건 어렵습니다.',
+        url: 'https://longblack.co/note/1859',
+        sentence: '“모든 문제를 <span class="sentence-blank">ADHD</span> 탓으로 돌려선 안 됩니다. 사실 복잡한 사회에서 아무런 어려움 없이 온전히 집중하며 사는 건 어렵습니다.”'
+    },
     { word: '의지력', original: '가짜 ADHD : 우리는 왜 자신의 집중력에 만족하지 못할까?', description: '배터리처럼 쓰면 닳는 유한한 자원이니, 이것에 기대지 말고 구조를 바꾸세요.', url: 'https://longblack.co/note/1859' },
     { word: '찰스핸디', original: '찰스 핸디', description: '다정한 경영철학자, 포트폴리오 인생', url: 'https://longblack.co/note/1118' },
     { word: '곽민수', original: '곽민수', description: '이집트 고고학자, 대세감 만드는 법', url: 'https://longblack.co/note/1116' },

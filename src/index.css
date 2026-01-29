@@ -138,7 +138,6 @@ button {
 .user-profile {
     display: flex;
     align-items: center;
-    gap: 8px;
     cursor: pointer;
 }
 
@@ -146,8 +145,12 @@ button {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    border: 1px solid var(--color-border);
+    border: 2px solid #3A3A3C;
     object-fit: cover;
+}
+
+.user-profile:hover img {
+    border-color: #FFFFFF;
 }
 
 .user-profile span {
@@ -742,16 +745,18 @@ button {
 }
 
 .instruction-icon {
-    font-size: 24px;
-    width: 44px;
-    height: 44px;
-    background-color: #FFFFFF;
+    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    background-color: #00462A;
+    color: #FFFFFF;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     flex-shrink: 0;
+    font-weight: 800;
 }
 
 .instruction-text {
@@ -1097,6 +1102,163 @@ button {
     margin: 0 2px;
     border-bottom: 2px solid #00462A33;
     /* 연한 밑줄 강조 */
+}
+
+.question-section {
+    padding: 32px 24px;
+    margin-bottom: 40px;
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    border: 1px solid #E5E5E5;
+    text-align: center;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.question-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #00462A;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.sentence-display {
+    font-size: 20px;
+    line-height: 1.8;
+    color: #1A1A1B;
+    font-weight: 500;
+    word-break: keep-all;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.sentence-blank {
+    display: inline-block;
+    min-width: 80px;
+    border-bottom: 3px solid #00462A;
+    color: #00462A;
+    font-weight: 800;
+    margin: 0 4px;
+}
+
+/* 도전자 기회(생명력) 섹션 - 프리미엄 디자인 */
+.lives-section {
+    background-color: #F8F9FA;
+    border: 1px solid #E5E5E5;
+    border-radius: 20px;
+    padding: 24px;
+    margin: 0 auto 40px;
+    max-width: 650px;
+    text-align: center;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.lives-info {
+    font-size: 15px;
+    font-weight: 800;
+    color: #1A1A1B;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.lives-info::before,
+.lives-info::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #D3D6DA, transparent);
+    max-width: 60px;
+}
+
+.lives-container {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+/* 커피잔 아이콘 디자인 */
+.coffee-cup-container {
+    position: relative;
+    width: 48px;
+    height: 36px;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cup-main {
+    position: absolute;
+    width: 36px;
+    height: 28px;
+    border: 2.5px solid #00462A;
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+    background-color: #FFFFFF;
+    overflow: hidden;
+    z-index: 2;
+    transition: border-color 0.4s;
+}
+
+.cup-handle {
+    position: absolute;
+    right: 4px;
+    top: 6px;
+    width: 12px;
+    height: 14px;
+    border: 2.5px solid #00462A;
+    border-left: none;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
+    z-index: 1;
+    transition: border-color 0.4s;
+}
+
+.cup-liquid {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 85%;
+    background-color: #00462A;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: bottom;
+}
+
+.cup-bean-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+    width: 6px;
+    height: 10px;
+    background-color: #FFFFFF;
+    border-radius: 50%;
+    opacity: 0.9;
+    z-index: 3;
+    transition: opacity 0.4s;
+}
+
+/* 생명을 잃었을 때 스타일 (커피를 다 마신 상태) */
+.coffee-cup-container.lost {
+    transform: scale(0.9);
+}
+
+.coffee-cup-container.lost .cup-main,
+.coffee-cup-container.lost .cup-handle {
+    border-color: #E2E2E2;
+}
+
+.coffee-cup-container.lost .cup-liquid {
+    transform: scaleY(0);
+}
+
+.coffee-cup-container.lost .cup-bean-icon {
+    opacity: 0;
 }
 
 .note-info-card {

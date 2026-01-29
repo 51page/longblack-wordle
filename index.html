@@ -9,7 +9,7 @@
     <meta property="og:title" content="롱블랙 단어 맞추기">
     <meta property="og:description" content="매일 새로운 롱블랙 노트 제목을 맞춰보세요">
     <meta property="og:type" content="website">
-    <title>롱블랙 문장 퍼즐</title>
+    <title>LB 문장 퍼즐</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
@@ -42,10 +42,9 @@
                     </button>
                     <div id="user-profile" class="user-profile hidden">
                         <img id="user-photo" src="" alt="Profile">
-                        <span id="user-name"></span>
                     </div>
                 </div>
-                <h1 class="logo">롱블랙 문장 퍼즐</h1>
+                <h1 class="logo">LB 문장 퍼즐</h1>
                 <div class="header-buttons">
                     <button id="hint-btn" class="icon-btn" aria-label="힌트">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -77,10 +76,9 @@
 
         <main id="game-container">
             <div id="message" class="message hidden"></div>
-            <div class="timer-section">
-                <div class="timer-label">다음 문제까지 남은 시간</div>
-                <div id="countdown" class="countdown">00:00:00</div>
-                <div class="timer-info">하루 한 문제만 풀 수 있어요. 이 문제는 곧 사라집니다.</div>
+            <div id="question-section" class="question-section">
+                <span class="question-title">오늘의 문장 퍼즐 문제입니다.</span>
+                <p id="sentence-display" class="sentence-display"></p>
             </div>
             <div id="game-board"></div>
             <div id="keyboard"></div>
@@ -97,24 +95,21 @@
             <div class="modal-body">
                 <div class="help-instructions">
                     <div class="instruction-item">
-                        <div class="instruction-icon">🔖</div>
+                        <div class="instruction-icon">1</div>
                         <div class="instruction-text">
-                            <strong>오늘의 문장</strong>
-                            <span>롱블랙 노트에서 발췌한 영감 넘치는 문장을 맞춰보세요.</span>
+                            <span>롱블랙 노트들에 나온 문장을 맞추는 게임입니다.</span>
                         </div>
                     </div>
                     <div class="instruction-item">
-                        <div class="instruction-icon">🎯</div>
+                        <div class="instruction-icon">2</div>
                         <div class="instruction-text">
-                            <strong>5번의 기회</strong>
-                            <span>매일 새로운 문제가 제공되며, 단 5번 안에 정답을 찾아보세요.</span>
+                            <span>하루 하나의 문제가 주어지고 총 5번의 기회 안에 맞춰보세요.</span>
                         </div>
                     </div>
                     <div class="instruction-item">
-                        <div class="instruction-icon">🔐</div>
+                        <div class="instruction-icon">3</div>
                         <div class="instruction-text">
-                            <strong>나만의 기록</strong>
-                            <span>로그인 시 나의 정답 기록과 실시간 랭킹을 확인할 수 있습니다.</span>
+                            <span>구글 계정 로그인을 하면 랭킹과 기록 아카이빙을 확인할 수 있어요.</span>
                         </div>
                     </div>
                 </div>

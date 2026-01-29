@@ -35,7 +35,7 @@ function initAuth() {
             if (loginBtn) loginBtn.classList.add('hidden');
             if (userProfile) userProfile.classList.remove('hidden');
             if (userPhoto) userPhoto.src = user.photoURL;
-            if (userName) userName.textContent = user.displayName.split(' ')[0];
+            // if (userName) userName.textContent = user.displayName.split(' ')[0];
 
             // 아카이빙된 데이터 동기화
             await syncUserData(user.uid);

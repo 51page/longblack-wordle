@@ -4,78 +4,104 @@ function createGameBoard(wordLength, maxGuesses = 5) {
     const board = document.getElementById('game-board');
     board.innerHTML = '';
 
-    // 게임 안내 메시지 추가
-    const instruction = document.createElement('div');
-    instruction.className = 'game-instruction';
-    instruction.textContent = '5번의 기회가 있어요! 지금 도전하세요';
-    board.appendChild(instruction);
+    // 도전자 섹션 컨테이너
+    const livesSection = document.createElement('div');
+    livesSection.className = 'lives-section';
+
+    // 도전 기회 안내 텍스트
+    const livesInfo = document.createElement('div');
+    livesInfo.className = 'lives-info';
+    livesInfo.textContent = '총 5번의 도전 기회가 있어요!';
+    livesSection.appendChild(livesInfo);
+
+    // 생명력 표시 (커피잔 아이콘)
+    const livesContainer = document.createElement('div');
+    livesContainer.className = 'lives-container';
+    livesContainer.id = 'lives-container';
 
     for (let i = 0; i < maxGuesses; i++) {
-        const rowWrapper = document.createElement('div');
-        rowWrapper.className = 'row-container';
+        const cupContainer = document.createElement('div');
+        cupContainer.className = 'coffee-cup-container';
 
-        // 행 번호 추가
-        const rowNumber = document.createElement('div');
-        rowNumber.className = 'row-number';
-        rowNumber.textContent = i + 1;
-        rowWrapper.appendChild(rowNumber);
+        cupContainer.innerHTML = `
+            <div class="cup-main">
+                <div class="cup-liquid"></div>
+                <div class="cup-bean-icon"></div>
+            </div>
+            <div class="cup-handle"></div>
+        `;
 
-        const row = document.createElement('div');
-        row.className = 'board-row';
-        row.dataset.row = i;
-
-        for (let j = 0; j < wordLength; j++) {
-            const tile = document.createElement('div');
-            tile.className = 'tile';
-            tile.dataset.col = j;
-            row.appendChild(tile);
-        }
-
-        rowWrapper.appendChild(row);
-        board.appendChild(rowWrapper);
+        livesContainer.appendChild(cupContainer);
     }
+    livesSection.appendChild(livesContainer);
+    board.appendChild(livesSection);
+
+    // 정답 입력칸 (딱 한 줄만)
+    const rowWrapper = document.createElement('div');
+    rowWrapper.className = 'row-container single-row';
+
+    const row = document.createElement('div');
+    row.className = 'board-row active-row';
+    row.dataset.row = 0;
+
+    for (let j = 0; j < wordLength; j++) {
+        const tile = document.createElement('div');
+        tile.className = 'tile';
+        tile.dataset.col = j;
+        row.appendChild(tile);
+    }
+
+    rowWrapper.appendChild(row);
+    board.appendChild(rowWrapper);
 }
 
 function updateBoard(guesses, currentGuess, evaluations, wordLength, activeIndex) {
-    const rows = document.querySelectorAll('.board-row');
+    // 모든 추측 히스토리는 생명력 깎기로 대체됨
+    // activeIndex: 현재 입력 중인 타일 위치
 
-    rows.forEach((row, rowIndex) => {
-        const tiles = row.querySelectorAll('.tile');
+    // 생명력 업데이트
+    const cups = document.querySelectorAll('.coffee-cup-container');
+    const lostCount = guesses.length;
 
-        if (rowIndex < guesses.length) {
-            // 이미 제출된 추측
-            const guess = guesses[rowIndex];
-            const evaluation = evaluations[rowIndex];
-
-            tiles.forEach((tile, colIndex) => {
-                tile.textContent = guess[colIndex] || '';
-                tile.className = `tile ${evaluation[colIndex]}`;
-            });
-        } else if (rowIndex === guesses.length) {
-            // 현재 입력 중인 행
-            tiles.forEach((tile, colIndex) => {
-                tile.textContent = currentGuess[colIndex] || '';
-
-                let className = 'tile';
-                if (currentGuess[colIndex]) {
-                    className += ' filled';
-                }
-
-                // 현재 입력 포커스가 있는 타일에 'active' 클래스 추가
-                if (colIndex === activeIndex) {
-                    className += ' active';
-                }
-
-                tile.className = className;
-            });
+    cups.forEach((cup, index) => {
+        if (index < lostCount) {
+            cup.classList.add('lost');
         } else {
-            // 빈 행
-            tiles.forEach(tile => {
-                tile.textContent = '';
-                tile.className = 'tile';
-            });
+            cup.classList.remove('lost');
         }
     });
+
+    // 입력칸 업데이트 (단일 행만 존재)
+    const row = document.querySelector('.board-row.active-row');
+    if (!row) return;
+
+    const tiles = row.querySelectorAll('.tile');
+
+    // 이전에 시도했던 추측들의 결과는 보여줄 필요가 없거나, 마지막 추측 결과만 슬쩍 보여줄 수 있음
+    // 여기서는 현재 입력 중인 내용을 보여주는 데 집중
+
+    // 마지막 제출 결과가 있으면 (애니메이션 중) 해당 색상을 보여줌
+    const lastEvaluation = evaluations.length > 0 ? evaluations[evaluations.length - 1] : null;
+    const isShowingResult = currentGuess.length === wordLength && lastEvaluation;
+
+    for (let i = 0; i < wordLength; i++) {
+        const tile = tiles[i];
+        const char = currentGuess[i] || '';
+        tile.textContent = char;
+
+        tile.classList.remove('active', 'filled', 'correct', 'present', 'absent');
+
+        if (char) {
+            tile.classList.add('filled');
+        }
+
+        // 정답 체크 결과 표시 중이라면
+        if (isShowingResult) {
+            tile.classList.add(lastEvaluation[i]);
+        } else if (i === activeIndex) {
+            tile.classList.add('active');
+        }
+    }
 }
 
 function animateRow(rowIndex, animation) {
