@@ -1,6 +1,6 @@
 // 게임 보드 컴포넌트
 
-function createGameBoard(wordLength, maxGuesses = 5) {
+function createGameBoard(wordLength, maxGuesses = 5, isFinished = false) {
     const board = document.getElementById('game-board');
     board.innerHTML = '';
 
@@ -11,7 +11,13 @@ function createGameBoard(wordLength, maxGuesses = 5) {
     // 도전 기회 안내 텍스트
     const livesInfo = document.createElement('div');
     livesInfo.className = 'lives-info';
-    livesInfo.textContent = '총 5번의 도전 기회가 있어요!';
+
+    if (isFinished) {
+        livesInfo.innerHTML = `오늘 문장 퍼즐에 이미 참여하셨어요. 내일을 기다려주세요.<br>자정에 새로운 문제가 업데이트 됩니다.`;
+        livesInfo.style.lineHeight = '1.6';
+    } else {
+        livesInfo.textContent = '총 5번의 도전 기회가 있어요!';
+    }
     livesSection.appendChild(livesInfo);
 
     // 생명력 표시 (커피잔 아이콘)
@@ -55,7 +61,7 @@ function createGameBoard(wordLength, maxGuesses = 5) {
     board.appendChild(rowWrapper);
 }
 
-function updateBoard(guesses, currentGuess, evaluations, wordLength, activeIndex) {
+function updateBoard(guesses, currentGuess, evaluations, wordLength, activeIndex, showResult = false) {
     // 모든 추측 히스토리는 생명력 깎기로 대체됨
     // activeIndex: 현재 입력 중인 타일 위치
 
@@ -81,8 +87,9 @@ function updateBoard(guesses, currentGuess, evaluations, wordLength, activeIndex
     // 여기서는 현재 입력 중인 내용을 보여주는 데 집중
 
     // 마지막 제출 결과가 있으면 (애니메이션 중) 해당 색상을 보여줌
+    // 제출 후 결과(색상)를 보여주는 상태인지 확인
     const lastEvaluation = evaluations.length > 0 ? evaluations[evaluations.length - 1] : null;
-    const isShowingResult = currentGuess.length === wordLength && lastEvaluation;
+    const isShowingResult = showResult && lastEvaluation;
 
     for (let i = 0; i < wordLength; i++) {
         const tile = tiles[i];

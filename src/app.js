@@ -19,9 +19,8 @@ function initializeGame() {
     const answer = todayWordData.word;
     const wordLength = answer.length;
 
-    // 테스트 버전: 새로고침 시 항상 새 게임 시작 (저장된 상태 무시)
-    // const savedState = loadGameState();
-    const savedState = null;
+    // 저장된 상태 불러오기
+    const savedState = loadGameState();
 
     if (savedState && savedState.wordLength === wordLength) {
         // 저장된 상태 복원
@@ -55,8 +54,10 @@ function initializeGame() {
         initializeGameState(wordLength);
     }
 
+    const isFinished = gameState.gameStatus !== 'playing';
+
     // UI 초기화
-    createGameBoard(wordLength);
+    createGameBoard(wordLength, 5, isFinished);
     createKeyboard(handleKeyPress);
     initializeModals();
     initAuth(); // 인증 로직 초기화
@@ -64,12 +65,17 @@ function initializeGame() {
     // 문장 표시 (ADHD 등 정답 부분은 빈칸 처리)
     const sentenceDisplay = document.getElementById('sentence-display');
     if (sentenceDisplay && todayWordData.sentence) {
-        // 정답 부분을 빈칸으로 시각화
-        const hiddenSentence = todayWordData.sentence.replace(
-            /<span class="sentence-blank">.*?<\/span>/,
-            '<span class="sentence-blank">&nbsp;&nbsp;&nbsp;&nbsp;</span>'
-        );
-        sentenceDisplay.innerHTML = hiddenSentence;
+        if (isFinished) {
+            // 이미 풀었으면 정답이 채워진 문장 표시
+            sentenceDisplay.innerHTML = todayWordData.sentence;
+        } else {
+            // 아직 안 풀었으면 빈칸 처리
+            const hiddenSentence = todayWordData.sentence.replace(
+                /<span class="sentence-blank">.*?<\/span>/,
+                '<span class="sentence-blank">&nbsp;&nbsp;&nbsp;&nbsp;</span>'
+            );
+            sentenceDisplay.innerHTML = hiddenSentence;
+        }
     }
 
     // 힌트 데이터 전달 (추후 힌트 모달에 사용)
@@ -211,12 +217,14 @@ function handleBackspace() {
 }
 
 // 보드 업데이트 (조합 중인 글자 포함)
-function updateBoardWithComposition() {
-    const displayGuess = [...gameState.currentGuess];
+function updateBoardWithComposition(showResult = false) {
+    const { currentGuess, currentInput } = gameState;
+    const { cho, jung, jong } = currentInput;
 
-    // 현재 조합 중인 글자 추가
-    const { cho, jung, jong } = gameState.currentInput;
+    let displayGuess = [...currentGuess];
+
     if (cho) {
+        // 조합 중인 상태를 시뮬레이션
         const composing = composeHangul(cho, jung || 'ㅏ', jong);  // 임시로 'ㅏ' 사용
         if (composing && jung) {
             const actualComposing = composeHangul(cho, jung, jong);
@@ -233,7 +241,7 @@ function updateBoardWithComposition() {
     // 현재 입력 중인 위치(커서)는 gameState.currentGuess.length 입니다.
     // 게임이 진행 중일 때만 커서를 표시합니다.
     const activeIndex = gameState.gameStatus === 'playing' ? gameState.currentGuess.length : -1;
-    updateBoard(gameState.guesses, displayString, gameState.evaluations, gameState.wordLength, activeIndex);
+    updateBoard(gameState.guesses, displayString, gameState.evaluations, gameState.wordLength, activeIndex, showResult);
 }
 
 // 키 입력 처리
@@ -319,7 +327,7 @@ async function submitGuess() {
     updateKeyboardState(guess, evaluation, gameState.keyboardState);
 
     // UI 업데이트 (결과 색상 노출)
-    updateBoardWithComposition();
+    updateBoardWithComposition(true);
     animateRow(0, 'flip');
 
     // 2초간 결과 보여주기

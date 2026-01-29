@@ -95,6 +95,30 @@ async function syncUserData(uid) {
             };
 
             saveStatistics(mergedStats);
+
+            // 오늘 이미 참여했는지 확인 (다른 기기에서 플레이한 경우)
+            const today = new Date().toDateString();
+            if (serverData.lastPlayedDate === today) {
+                const localState = loadGameState();
+                if (!localState || localState.gameStatus === 'playing') {
+                    // 서버에 기록이 있는데 로컬은 진행 중이라면 종료 상태로 강제 전환
+                    const newState = {
+                        date: today,
+                        wordLength: localState ? localState.wordLength : 4,
+                        guesses: localState ? localState.guesses : [],
+                        gameStatus: 'won', // 참여 완료 상태로 간주
+                        evaluations: localState ? localState.evaluations : []
+                    };
+                    saveGameState(newState);
+
+                    // UI 즉시 반영을 위해 페이지 새로고침 (가장 확실한 방법)
+                    // 또는 initializeGame을 다시 호출할 수 있으나 상태 전이가 복잡하므로 리로드 권장
+                    if (localState && localState.gameStatus === 'playing') {
+                        window.location.reload();
+                    }
+                }
+            }
+
             if (typeof updateStatsDisplay === 'function') updateStatsDisplay();
         }
         // 기본 정보 업데이트 (항상 실행)
@@ -118,6 +142,7 @@ async function archiveGameResult() {
             displayName: user.displayName,
             photoURL: user.photoURL,
             stats: stats,
+            lastPlayedDate: new Date().toDateString(),
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
         console.log("Archive success!");
