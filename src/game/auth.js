@@ -98,10 +98,16 @@ async function syncUserData(uid) {
             if (typeof updateStatsDisplay === 'function') updateStatsDisplay();
         } else {
             await docRef.set({
+                displayName: auth.currentUser.displayName,
+                photoURL: auth.currentUser.photoURL,
                 stats: localStats,
                 lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
             });
         }
+        await docRef.set({
+            displayName: auth.currentUser.displayName,
+            photoURL: auth.currentUser.photoURL,
+        }, { merge: true });
     } catch (e) {
         console.error("Data sync failed:", e);
     }
@@ -115,11 +121,32 @@ async function archiveGameResult() {
     const stats = loadStatistics();
     try {
         await db.collection('users').doc(user.uid).set({
+            displayName: user.displayName,
+            photoURL: user.photoURL,
             stats: stats,
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
         console.log("Archive success!");
     } catch (e) {
         console.error("Archive failed:", e);
+    }
+}
+
+// 리더보드 데이터 가져오기
+async function fetchLeaderboard() {
+    if (!db) return [];
+    try {
+        const snapshot = await db.collection('users')
+            .orderBy('stats.maxStreak', 'desc')
+            .limit(5)
+            .get();
+
+        return snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+    } catch (e) {
+        console.error("Leaderboard fetch failed:", e);
+        return [];
     }
 }

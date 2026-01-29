@@ -62,6 +62,55 @@ function updateStatsDisplay() {
 
     document.getElementById('stat-streak').textContent = stats.currentStreak;
     document.getElementById('stat-max-streak').textContent = stats.maxStreak;
+
+    // 배지 및 리더보드 업데이트
+    updateBadgeDisplay(stats);
+    updateLeaderboardDisplay();
+}
+
+// 배지 표시 업데이트
+function updateBadgeDisplay(stats) {
+    const badgeList = document.getElementById('badge-list');
+    if (!badgeList) return;
+
+    const badges = [
+        { id: 'first-win', name: '첫 성공', icon: '🐣', condition: stats.won >= 1 },
+        { id: 'streak-3', name: '3일 연속', icon: '🔥', condition: stats.maxStreak >= 3 },
+        { id: 'streak-7', name: '7일 연속', icon: '💎', condition: stats.maxStreak >= 7 },
+        { id: 'win-10', name: '10회 달성', icon: '🏆', condition: stats.won >= 10 }
+    ];
+
+    badgeList.innerHTML = badges.map(badge => `
+        <div class="badge-item ${badge.condition ? 'earned' : ''}" title="${badge.name}">
+            <div class="badge-icon">${badge.icon}</div>
+            <div class="badge-name">${badge.name}</div>
+        </div>
+    `).join('');
+}
+
+// 리더보드 표시 업데이트
+async function updateLeaderboardDisplay() {
+    const leaderboardList = document.getElementById('leaderboard-list');
+    if (!leaderboardList) return;
+
+    // fetchLeaderboard는 auth.js에 정의되어 있음
+    if (typeof fetchLeaderboard !== 'function') return;
+
+    const rankings = await fetchLeaderboard();
+
+    if (rankings.length === 0) {
+        leaderboardList.innerHTML = '<div class="loading-spinner">로그인 후 랭킹을 확인해보세요!</div>';
+        return;
+    }
+
+    leaderboardList.innerHTML = rankings.map((user, index) => `
+        <div class="rank-item">
+            <div class="rank-number">${index + 1}</div>
+            <img class="rank-photo" src="${user.photoURL || 'https://www.gravatar.com/avatar/0000?d=mp'}" alt="">
+            <div class="rank-name">${user.displayName || '익명의 러너'}</div>
+            <div class="rank-value">${user.stats?.maxStreak || 0}<span>연속</span></div>
+        </div>
+    `).join('');
 }
 
 function showShareSection(guesses, evaluations, answer) {

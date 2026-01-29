@@ -699,6 +699,134 @@ button {
     text-transform: uppercase;
 }
 
+/* 배지 섹션 */
+.badge-section {
+    margin-bottom: 32px;
+}
+
+.badge-section h3,
+.leaderboard-section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.badge-list {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.badge-item {
+    width: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.3;
+    filter: grayscale(1);
+    transition: all 0.3s;
+}
+
+.badge-item.earned {
+    opacity: 1;
+    filter: grayscale(0);
+}
+
+.badge-icon {
+    width: 44px;
+    height: 44px;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.badge-item.earned .badge-icon {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: white;
+}
+
+.badge-name {
+    font-size: 10px;
+    font-weight: 700;
+    color: #4A4A4A;
+    text-align: center;
+}
+
+/* 리더보드 섹션 */
+.leaderboard-section {
+    margin-bottom: 32px;
+    background-color: #F8F9FA;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.loading-spinner {
+    text-align: center;
+    font-size: 13px;
+    color: #999;
+}
+
+.rank-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.rank-number {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--color-correct);
+    min-width: 20px;
+}
+
+.rank-photo {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.rank-name {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rank-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.rank-value span {
+    font-size: 10px;
+    font-weight: 500;
+    color: #999;
+    margin-left: 2px;
+}
+
 .share-section {
     border-top: 1px solid #E5E5E5;
     padding-top: 24px;
