@@ -101,6 +101,60 @@ button {
     gap: 8px;
 }
 
+/* 인증 영역 스타일 */
+.auth-container {
+    display: flex;
+    align-items: center;
+}
+
+.login-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    transition: all var(--transition-fast);
+}
+
+.login-btn:hover {
+    background-color: #f8f9fa;
+    border-color: var(--color-text);
+}
+
+.login-btn svg {
+    display: flex;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.user-profile img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    object-fit: cover;
+}
+
+.user-profile span {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.hidden {
+    display: none !important;
+}
+
 .icon-btn {
     width: 40px;
     height: 40px;

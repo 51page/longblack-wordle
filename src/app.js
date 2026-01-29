@@ -59,6 +59,7 @@ function initializeGame() {
     createGameBoard(wordLength);
     createKeyboard(handleKeyPress);
     initializeModals();
+    initAuth(); // 인증 로직 초기화
 
     // 힌트 표시 (글자 수 표시)
     showHint(wordLength, todayWordData.description);
@@ -306,6 +307,7 @@ function submitGuess() {
     }
 
     saveCurrentState();
+    archiveGameResult(); // 서버에 상태 아카이빙 신청
 }
 
 // 게임 종료 처리
@@ -315,6 +317,9 @@ function handleGameEnd() {
 
     // 통계 업데이트
     updateStatistics(won, guessCount);
+
+    // 서버에 아카이빙
+    if (typeof archiveGameResult === 'function') archiveGameResult();
 
     // 메시지 표시
     setTimeout(() => {
@@ -425,6 +430,9 @@ function saveCurrentState() {
         evaluations: gameState.evaluations
     };
     saveGameState(state);
+
+    // 서버에 아카이빙
+    if (typeof archiveGameResult === 'function') archiveGameResult();
 }
 
 // 페이지 로드 시 게임 초기화
