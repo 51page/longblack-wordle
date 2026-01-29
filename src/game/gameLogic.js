@@ -129,7 +129,7 @@ function updateKeyboardState(guess, evaluation, keyboardState) {
 }
 
 // 게임 종료 확인
-function checkGameEnd(guesses, answer, maxGuesses = 6) {
+function checkGameEnd(guesses, answer, maxGuesses = 5) {
     // 승리 확인
     if (guesses.length > 0 && guesses[guesses.length - 1] === answer) {
         return { status: 'won', guessCount: guesses.length };
@@ -146,7 +146,7 @@ function checkGameEnd(guesses, answer, maxGuesses = 6) {
 // 공유 텍스트 생성
 function generateShareText(guesses, evaluations, wordLength, gameNumber) {
     const title = `롱블랙 문장 퍼즐 ${gameNumber}`;
-    const result = guesses.length <= 6 ? `${guesses.length}/6` : 'X/6';
+    const result = guesses.length <= 5 ? `${guesses.length}/5` : 'X/5';
 
     let grid = '';
     evaluations.forEach(evaluation => {

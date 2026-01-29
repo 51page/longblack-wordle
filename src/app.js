@@ -213,7 +213,10 @@ function updateBoardWithComposition() {
     }
 
     const displayString = displayGuess.join('');
-    updateBoard(gameState.guesses, displayString, gameState.evaluations, gameState.wordLength);
+    // 현재 입력 중인 위치(커서)는 gameState.currentGuess.length 입니다.
+    // 게임이 진행 중일 때만 커서를 표시합니다.
+    const activeIndex = gameState.gameStatus === 'playing' ? gameState.currentGuess.length : -1;
+    updateBoard(gameState.guesses, displayString, gameState.evaluations, gameState.wordLength, activeIndex);
 }
 
 // 키 입력 처리

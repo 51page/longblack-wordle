@@ -275,11 +275,13 @@ button {
 }
 
 .hint-title {
-    font-size: 13px;
+    font-size: 18px;
+    /* 13px에서 상향 조정 */
     font-weight: 800;
     color: #00462A;
     /* 롱블랙 그린 포인트를 힌트 타이틀에 적용 */
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    /* 간격 살짝 넓힘 */
     text-transform: uppercase;
     letter-spacing: 1.5px;
 }
@@ -345,6 +347,37 @@ button {
     margin-bottom: 20px;
 }
 
+.game-instruction {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #FF4B22;
+    /* 포인트 컬러인 오렌지-레드 사용 */
+    margin-bottom: 12px;
+    animation: fadeIn 0.5s ease;
+}
+
+.row-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.row-number {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    background-color: #EEE;
+    color: #888;
+    border-radius: 50%;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
 .board-row {
     display: flex;
     gap: var(--gap);
@@ -367,6 +400,8 @@ button {
     text-transform: uppercase;
     user-select: none;
     transition: all var(--transition-fast);
+    position: relative;
+    /* 커서 배치를 위해 추가 */
 }
 
 @media (max-width: 480px) {
@@ -430,6 +465,36 @@ button {
 
     100% {
         transform: rotateX(0);
+    }
+}
+
+/* 커서 애니메이션 */
+.tile.active::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 60%;
+    background-color: var(--color-correct);
+    left: 50%;
+    transform: translateX(-50%);
+    animation: blink 1s step-end infinite;
+    z-index: 1;
+}
+
+/* 글자가 입력된 경우 커서를 글자 뒤로 살짝 이동 */
+.tile.active.filled::after {
+    transform: translateX(14px);
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
     }
 }
 

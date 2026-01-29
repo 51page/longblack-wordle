@@ -1,10 +1,25 @@
 // 게임 보드 컴포넌트
 
-function createGameBoard(wordLength, maxGuesses = 6) {
+function createGameBoard(wordLength, maxGuesses = 5) {
     const board = document.getElementById('game-board');
     board.innerHTML = '';
 
+    // 게임 안내 메시지 추가
+    const instruction = document.createElement('div');
+    instruction.className = 'game-instruction';
+    instruction.textContent = '5번의 기회가 있어요! 지금 도전하세요';
+    board.appendChild(instruction);
+
     for (let i = 0; i < maxGuesses; i++) {
+        const rowWrapper = document.createElement('div');
+        rowWrapper.className = 'row-container';
+
+        // 행 번호 추가
+        const rowNumber = document.createElement('div');
+        rowNumber.className = 'row-number';
+        rowNumber.textContent = i + 1;
+        rowWrapper.appendChild(rowNumber);
+
         const row = document.createElement('div');
         row.className = 'board-row';
         row.dataset.row = i;
@@ -16,11 +31,12 @@ function createGameBoard(wordLength, maxGuesses = 6) {
             row.appendChild(tile);
         }
 
-        board.appendChild(row);
+        rowWrapper.appendChild(row);
+        board.appendChild(rowWrapper);
     }
 }
 
-function updateBoard(guesses, currentGuess, evaluations, wordLength) {
+function updateBoard(guesses, currentGuess, evaluations, wordLength, activeIndex) {
     const rows = document.querySelectorAll('.board-row');
 
     rows.forEach((row, rowIndex) => {
@@ -39,7 +55,18 @@ function updateBoard(guesses, currentGuess, evaluations, wordLength) {
             // 현재 입력 중인 행
             tiles.forEach((tile, colIndex) => {
                 tile.textContent = currentGuess[colIndex] || '';
-                tile.className = currentGuess[colIndex] ? 'tile filled' : 'tile';
+
+                let className = 'tile';
+                if (currentGuess[colIndex]) {
+                    className += ' filled';
+                }
+
+                // 현재 입력 포커스가 있는 타일에 'active' 클래스 추가
+                if (colIndex === activeIndex) {
+                    className += ' active';
+                }
+
+                tile.className = className;
             });
         } else {
             // 빈 행
@@ -76,17 +103,18 @@ function showHint(wordLength, description) {
     const wordCountHint = document.getElementById('word-count-hint');
     const extraHintText = document.getElementById('extra-hint-text');
 
+    // 사용자의 요청에 따라 글자 수 힌트(예: 3글자 단어)는 표시하지 않음
     if (wordCountHint) {
-        wordCountHint.textContent = `${wordLength}글자 단어`;
+        wordCountHint.style.display = 'none';
     }
 
     if (extraHintText) {
         extraHintText.textContent = description;
     }
 
-    // 기본 힌트 영역은 비웁니다. 사용자가 '추가 힌트보기'를 누르면 모달로 보여줍니다.
+    // 기본 힌트 영역 텍스트 변경
     const hint = document.getElementById('hint');
     if (hint) {
-        hint.innerHTML = '힌트 문장이 필요하면 아래 버튼을 눌러보세요.';
+        hint.innerHTML = '힌트가 필요하다면 아래 버튼을 클릭하세요.';
     }
 }
