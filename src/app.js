@@ -52,6 +52,7 @@ function initializeGame() {
     initializeModals();
     initAuth();
     initHiddenInput();
+    initLogo();
 
     // 문장 표시 및 박스 생성
     const sentenceDisplay = document.getElementById('sentence-display');
@@ -211,6 +212,7 @@ async function submitGuess() {
 
     if (gameState.gameStatus !== 'playing') {
         handleGameEnd();
+        updateHintButton(); // 상태 변경 시 버튼도 갱신
     }
 
     saveCurrentState();
@@ -333,6 +335,39 @@ function initHiddenInput() {
 
     // 초기 포커스
     setTimeout(() => input.focus(), 500);
+
+    updateHintButton();
+}
+
+// 로고 클릭시 새로고침 (홈 버튼 기능)
+function initLogo() {
+    const logo = document.querySelector('.logo');
+    if (logo) {
+        logo.onclick = () => window.location.reload();
+    }
+}
+
+// 게임 종료 시 힌트 버튼을 노트 링크로 변경
+function updateHintButton() {
+    const isFinished = gameState.gameStatus !== 'playing';
+    const hintBtn = document.getElementById('hint-btn');
+    if (!hintBtn) return;
+
+    if (isFinished) {
+        const todayWordData = getTodayWord();
+        hintBtn.textContent = '오늘의 롱블랙 노트 보러가기';
+        hintBtn.className = 'note-link-btn'; // 스타일 변경
+        hintBtn.onclick = () => {
+            window.open(todayWordData.url, '_blank');
+        };
+    } else {
+        hintBtn.textContent = '힌트 보기';
+        hintBtn.className = 'hint-btn';
+        const inlineHint = document.getElementById('inline-hint-content');
+        hintBtn.onclick = () => {
+            if (inlineHint) inlineHint.classList.remove('hidden');
+        };
+    }
 }
 
 document.addEventListener('DOMContentLoaded', initializeGame);

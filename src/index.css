@@ -87,6 +87,8 @@ body {
     text-align: center;
     padding: 0 10px;
     white-space: nowrap;
+    cursor: pointer;
+    /* 홈 버튼처럼 보이게 */
 }
 
 .header-buttons {
@@ -855,6 +857,29 @@ body {
 
 .hint-btn:hover {
     background-color: #323234;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.note-link-btn {
+    width: 100%;
+    padding: 18px;
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: var(--border-radius);
+    color: var(--color-white);
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    text-decoration: none;
+    display: block;
+}
+
+.note-link-btn:hover {
+    filter: brightness(1.2);
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }

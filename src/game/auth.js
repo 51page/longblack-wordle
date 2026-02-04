@@ -117,8 +117,19 @@ async function syncUserData(uid) {
                         evaluations: []
                     };
                     saveGameState(newState);
+
+                    // 정답 맞춘 계정이 다시 접속했을 때 플로팅 메시지 표시
+                    if (typeof showMessage === 'function') {
+                        setTimeout(() => showMessage('오늘 문제를 풀었습니다. 내일 또 도전하세요', 4000), 1000);
+                    }
+
                     window.location.reload();
                     return;
+                } else if (localState.gameStatus !== 'playing') {
+                    // 이미 정답 맞춘 상태로 그냥 접속했을 때도 메시지 표시
+                    if (typeof showMessage === 'function') {
+                        setTimeout(() => showMessage('오늘 문제를 풀었습니다. 내일 또 도전하세요', 4000), 500);
+                    }
                 }
             } else {
                 // 서버에는 오늘 기록이 없는데 로컬은 종료 상태인 경우 -> 다른 계정의 흔적이므로 리셋
