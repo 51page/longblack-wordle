@@ -184,6 +184,22 @@
         </div>
     </div>
 
+    <!-- 닉네임 설정 모달 -->
+    <div id="nickname-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>닉네임 설정</h2>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; color: var(--color-text-secondary); font-size: 14px;">기록 저장을 위해 사용할 닉네임을
+                    입력해주세요. (2~8자)</p>
+                <input type="text" id="nickname-input" maxlength="8" placeholder="닉네임 입력"
+                    style="width: 100%; padding: 14px; border: 1px solid var(--color-border); border-radius: 12px; margin-bottom: 24px; font-size: 16px;">
+                <button id="save-nickname-btn" class="share-btn">저장하기</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase 및 데이터 -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
