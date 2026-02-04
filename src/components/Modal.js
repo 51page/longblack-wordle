@@ -11,9 +11,6 @@ function initializeModals() {
         updateStatsDisplay();
     });
 
-    document.getElementById('hint-btn').addEventListener('click', () => {
-        openModal('extra-hint');
-    });
 
     // 모달 닫기
     document.querySelectorAll('.close-btn').forEach(btn => {

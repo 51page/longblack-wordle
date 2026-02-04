@@ -145,20 +145,20 @@ function checkGameEnd(guesses, answer, maxGuesses = 5) {
 
 // 공유 텍스트 생성
 function generateShareText(guesses, evaluations, wordLength, gameNumber) {
-    const title = `롱블랙 문장 퍼즐 ${gameNumber}`;
-    const result = guesses.length <= 5 ? `${guesses.length}/5` : 'X/5';
+    const resultStatus = guesses[guesses.length - 1] === getTodayWord().word ? `${guesses.length}/5` : 'X/5';
+    let text = `LB 문장 퍼즐 #${gameNumber} ${resultStatus}\n\n`;
 
-    let grid = '';
     evaluations.forEach(evaluation => {
-        evaluation.forEach(state => {
-            if (state === 'correct') grid += '🟩';
-            else if (state === 'present') grid += '🟨';
-            else grid += '⬜';
-        });
-        grid += '\n';
+        const line = evaluation.map(status => {
+            if (status === 'correct') return '🟩';
+            if (status === 'present') return '🟨';
+            return '⬜';
+        }).join('');
+        text += line + '\n';
     });
 
-    return `${title} ${result}\n\n${grid}`;
+    text += '\n매일 새로운 롱블랙 노트를 맞춰보세요!';
+    return text;
 }
 
 // 게임 번호 계산 (시작일로부터 며칠째인지)

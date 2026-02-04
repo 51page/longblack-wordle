@@ -1,17 +1,42 @@
 // 롱블랙 노트 제목, 힌트, URL 데이터
 const WORDS_DATA = [
     {
+        word: '주도성',
+        original: '뇌 과학 : 주도성을 느끼는 뇌가 세상을 바꾼다',
+        description: '“공부하기로 선택한 다음, 선생님이 불러주는 걸 그냥 듣기만 한다면 어떨까요. 이때 뇌는 내가 선택했다고 해도 주도권을 크게 느끼지 않습니다. 하지만 ‘지금 들려주는 내용의 다음 이야기는 뭐가 될까?’라는 질문을 품고 여러 시나리오를 예측하며 듣으면, 뇌는 다르게 느낍니다. 내 예측이 ‘맞았음’을 확인하는 순간, 그 결과물을 보며 뇌는 주도성을 느끼죠. 나아가 지금 이 대화의 다음을 예측하며 읽는 것도 마찬가지입니다.”',
+        url: 'https://longblack.co/note/1879',
+        sentence: 'AI는 양날의 검이에요. AI가 주는 답을 그대로 받아들이면 당연히 나의 <span class="sentence-blank">주도성</span>이 떨어질 겁니다. 내가 원하는 답에 가까워지도록 괴롭혀야죠.'
+    },
+    {
         word: 'ADHD',
         original: '가짜 ADHD : 우리는 왜 자신의 집중력에 만족하지 못할까?',
         description: '모든 문제를 ADHD 탓으로 돌려선 안 됩니다. 사실 복잡한 사회에서 아무런 어려움 없이 온전히 집중하며 사는 건 어렵습니다.',
         url: 'https://longblack.co/note/1859',
         sentence: '“모든 문제를 <span class="sentence-blank">ADHD</span> 탓으로 돌려선 안 됩니다. 사실 복잡한 사회에서 아무런 어려움 없이 온전히 집중하며 사는 건 어렵습니다.”'
     },
-    { word: '의지력', original: '가짜 ADHD : 우리는 왜 자신의 집중력에 만족하지 못할까?', description: '배터리처럼 쓰면 닳는 유한한 자원이니, 이것에 기대지 말고 구조를 바꾸세요.', url: 'https://longblack.co/note/1859' },
-    { word: '찰스핸디', original: '찰스 핸디', description: '다정한 경영철학자, 포트폴리오 인생', url: 'https://longblack.co/note/1118' },
-    { word: '곽민수', original: '곽민수', description: '이집트 고고학자, 대세감 만드는 법', url: 'https://longblack.co/note/1116' },
+    {
+        word: '의지력',
+        original: '가짜 ADHD : 우리는 왜 자신의 집중력에 만족하지 못할까?',
+        description: '배터리처럼 쓰면 닳는 유한한 자원이니, 이것에 기대지 말고 구조를 바꾸세요.',
+        url: 'https://longblack.co/note/1859',
+        sentence: '“<span class="sentence-blank">의지력</span>은 배터리처럼 쓰면 닳는 유한한 자원이니, 이것에 기대지 말고 구조를 바꾸세요.”'
+    },
+    {
+        word: '찰스핸디',
+        original: '찰스 핸디',
+        description: '다정한 경영철학자, 포트폴리오 인생',
+        url: 'https://longblack.co/note/1118',
+        sentence: '“다정한 경영철학자 <span class="sentence-blank">찰스핸디</span>의 포트폴리오 인생을 만나보세요.”'
+    },
+    {
+        word: '곽민수',
+        original: '곽민수',
+        description: '이집트 고고학자, 대세감 만드는 법',
+        url: 'https://longblack.co/note/1116',
+        sentence: '“이집트 고고학자 <span class="sentence-blank">곽민수</span>가 말하는 대세감 만드는 법에 대해 알아보세요.”'
+    },
     { word: '이하성', original: '이하성', description: '타협하지 않는 셰프, 요리 괴물의 성장', url: 'https://longblack.co/note/1113' },
-    { word: '후덕죽', original: '후덕죽', description: '일흔여섯 현역 셰프, 멈추지 않는 즐거움', url: 'https://longblack.co/note/1111' },
+    { word: '후덕죽', original: '후덕죽', description: '현역 셰프, 멈추지 않는 즐거움', url: 'https://longblack.co/note/1111' },
     { word: '선제스님', original: '선제스님', description: '마음의 행복은 한 끼에서 시작된다', url: 'https://longblack.co/note/1110' },
     { word: '로드', original: '로드', description: '팀빌딩으로 1조원 뷰티 유니콘 만들다', url: 'https://longblack.co/note/1101' },
     { word: '박웅현', original: '박웅현 2', description: '뭉근하게 쌓는 삶, 반드시 넘쳐흐를 때', url: 'https://longblack.co/note/1098' },
@@ -72,8 +97,8 @@ function getTodayWord() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // 시작일 설정 (2026-01-29)
-    const startDate = new Date('2026-01-29');
+    // 시작일 설정 (오늘 단어를 주도성으로 맞추기 위해 2026-02-04로 변경)
+    const startDate = new Date('2026-02-04');
     startDate.setHours(0, 0, 0, 0);
 
     const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));

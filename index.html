@@ -4,17 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="롱블랙 단어 맞추기 - 매일 새로운 롱블랙 노트 제목을 맞춰보세요">
+    <meta name="description" content="롱블랙 문장 퍼즐 - 매일 새로운 롱블랙 노트를 맞춰보세요">
     <meta name="keywords" content="롱블랙, 단어게임, 단어맞추기, LongBlack">
-    <meta property="og:title" content="롱블랙 단어 맞추기">
-    <meta property="og:description" content="매일 새로운 롱블랙 노트 제목을 맞춰보세요">
+    <meta property="og:title" content="롱블랙 문장 퍼즐">
+    <meta property="og:description" content="매일 새로운 롱블랙 노트를 맞춰보세요">
     <meta property="og:type" content="website">
     <title>LB 문장 퍼즐</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="./src/index.css">
-    <!-- 폭죽 효과를 위한 라이브러리 -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 
@@ -46,14 +46,6 @@
                 </div>
                 <h1 class="logo">LB 문장 퍼즐</h1>
                 <div class="header-buttons">
-                    <button id="hint-btn" class="icon-btn" aria-label="힌트">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path
-                                d="M12 2v8M12 14v2M12 20v2M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h8M14 12h8M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-                            <circle cx="12" cy="12" r="3" />
-                        </svg>
-                    </button>
                     <button id="stats-btn" class="icon-btn" aria-label="통계">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -76,12 +68,35 @@
 
         <main id="game-container">
             <div id="message" class="message hidden"></div>
+
+            <div id="life-gauge-container">
+                <div class="life-gauge-header">
+                    <span class="life-gauge-label">남은 기회</span>
+                    <span id="life-gauge-count" class="life-gauge-count">5/5</span>
+                </div>
+                <div class="life-gauge-bar">
+                    <div id="life-gauge-fill" class="life-gauge-fill"></div>
+                </div>
+            </div>
+
             <div id="question-section" class="question-section">
+                <p class="instruction-text">총 5번의 기회가 있어요! 지금 도전하세요.</p>
                 <span class="question-title">오늘의 문장 퍼즐 문제입니다.</span>
                 <p id="sentence-display" class="sentence-display"></p>
             </div>
-            <div id="game-board"></div>
-            <div id="keyboard"></div>
+
+            <div class="hint-container">
+                <button id="hint-btn" class="hint-btn">힌트 보기</button>
+                <div id="inline-hint-content" class="inline-hint-content hidden">
+                    <button class="hint-close-btn" id="hint-close-btn">&times;</button>
+                    <div id="extra-hint-text-inline" class="extra-hint-text"></div>
+                    <div id="hint-note-info-inline" class="hint-note-section">
+                        <a id="hint-note-link-inline" href="#" target="_blank" class="share-btn">노트 읽으러 가기</a>
+                    </div>
+                </div>
+            </div>
+
+            <input type="text" id="hidden-input" autocomplete="off" spellcheck="false">
         </main>
     </div>
 
@@ -95,80 +110,20 @@
             <div class="modal-body">
                 <div class="help-instructions">
                     <div class="instruction-item">
-                        <div class="instruction-icon">1</div>
-                        <div class="instruction-text">
-                            <span>롱블랙 노트들에 나온 문장을 맞추는 게임입니다.</span>
-                        </div>
+                        <span>1. 롱블랙 노트에서 발췌한 문장의 빈칸을 맞춰주세요.</span>
                     </div>
                     <div class="instruction-item">
-                        <div class="instruction-icon">2</div>
-                        <div class="instruction-text">
-                            <span>하루 하나의 문제가 주어지고 총 5번의 기회 안에 맞춰보세요.</span>
-                        </div>
+                        <span>2. 총 5번의 기회가 주어지며, 틀릴수록 게이지가 줄어듭니다.</span>
                     </div>
                     <div class="instruction-item">
-                        <div class="instruction-icon">3</div>
-                        <div class="instruction-text">
-                            <span>구글 계정 로그인을 하면 랭킹과 기록 아카이빙을 확인할 수 있어요.</span>
-                        </div>
+                        <span>3. 키보드로 글자를 입력하고 Enter를 눌러 제출하세요.</span>
                     </div>
                 </div>
-
-                <div class="example">
-                    <p><strong>색상 의미:</strong></p>
-                    <div class="example-row">
-                        <div class="tile correct">브</div>
-                        <div class="tile">랜</div>
-                        <div class="tile">드</div>
-                    </div>
-                    <p><strong>브</strong>는 정답이며 올바른 위치입니다.</p>
-                </div>
-
-                <div class="example">
-                    <div class="example-row">
-                        <div class="tile">디</div>
-                        <div class="tile present">자</div>
-                        <div class="tile">인</div>
-                    </div>
-                    <p><strong>자</strong>는 정답에 포함되지만 위치가 틀렸습니다.</p>
-                </div>
-
-                <div class="example">
-                    <div class="example-row">
-                        <div class="tile">마</div>
-                        <div class="tile">케</div>
-                        <div class="tile absent">팅</div>
-                    </div>
-                    <p><strong>팅</strong>은 정답에 포함되지 않습니다.</p>
-                </div>
-
-                <p class="note">매일 자정에 새로운 단어가 공개됩니다!</p>
+                <p class="note" style="margin-top: 20px; font-size: 13px; color: #8E8E93;">매일 자정에 새로운 문제가 공개됩니다.</p>
             </div>
         </div>
     </div>
 
-    <!-- 추가 힌트 모달 -->
-    <div id="extra-hint-modal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>오늘 문장 힌트</h2>
-                <button class="close-btn" data-modal="extra-hint">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="extra-hint-content">
-                    <div id="extra-hint-text" class="extra-hint-text"></div>
-
-                    <div id="hint-note-info" class="hint-note-section">
-                        <div class="divider"></div>
-                        <p class="section-label">정답이 담긴 롱블랙 노트</p>
-                        <h3 id="hint-note-title" class="hint-note-title"></h3>
-                        <a id="hint-note-link" href="#" target="_blank" class="read-note-btn primary-btn">노트 읽으러 가기
-                            →</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- 통계 모달 -->
     <div id="stats-modal" class="modal hidden">
@@ -178,7 +133,6 @@
                 <button class="close-btn" data-modal="stats">&times;</button>
             </div>
             <div class="modal-body">
-                <div id="stats-login-msg" class="stats-login-msg hidden">로그인 후 게임에 참여하면 통계가 누적됩니다.</div>
                 <div class="stats-grid">
                     <div class="stat-item">
                         <div class="stat-value" id="stat-played">0</div>
@@ -194,68 +148,43 @@
                     </div>
                     <div class="stat-item">
                         <div class="stat-value" id="stat-max-streak">0</div>
-                        <div class="stat-label">최고 연속</div>
-                    </div>
-                </div>
-
-                <!-- 배지 섹션 -->
-                <div class="badge-section">
-                    <h3>내 배지</h3>
-                    <div id="badge-list" class="badge-list">
-                        <!-- 배지 아이콘들이 여기에 생성됨 -->
-                    </div>
-                </div>
-
-                <!-- 리더보드 섹션 -->
-                <div class="leaderboard-section">
-                    <h3>실시간 랭킹 (최고 연속)</h3>
-                    <div id="leaderboard-list" class="leaderboard-list">
-                        <div class="loading-spinner">랭킹 불러오는 중...</div>
+                        <div class="stat-label">최고</div>
                     </div>
                 </div>
                 <div id="share-section" class="share-section hidden">
                     <h3>결과 공유하기</h3>
-                    <button id="share-btn" class="share-btn">결과 복사</button>
-                    <div id="next-word-info" class="next-word-info"></div>
+                    <button id="share-btn" class="share-btn">결과 복사하기</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 결과 모달 (성공 시) -->
+    <!-- 결과 모달 -->
     <div id="result-modal" class="modal hidden">
-        <div class="modal-content result-content">
+        <div class="modal-content">
             <div class="modal-header">
-                <h2 id="result-title">정답입니다! 🎉</h2>
+                <h2 id="result-title">정답입니다!</h2>
                 <button class="close-btn" data-modal="result">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="result-summary">
-                    <p id="result-message">정답을 맞추셨습니다!</p>
+                <div class="note-info-card"
+                    style="background-color: var(--color-bg); padding: 24px; border-radius: 20px; margin-bottom: 24px;">
+                    <p style="font-size: 12px; color: var(--color-primary); font-weight: 700; margin-bottom: 8px;">오늘의
+                        롱블랙 노트</p>
+                    <h3 id="result-note-title" style="font-size: 20px; font-weight: 800; margin-bottom: 12px;"></h3>
+                    <p id="result-note-desc"
+                        style="font-size: 14px; color: var(--color-text-secondary); margin-bottom: 20px;"></p>
+                    <a id="result-note-link" href="#" target="_blank" class="share-btn"
+                        style="text-align: center; text-decoration: none; display: block;">롱블랙 노트 보러가기</a>
                 </div>
-
-                <div class="participation-stats-card">
-                    <p>(현재 기준) 오늘 <span class="highlight-num">5,689명</span>이 문장 퍼즐에 참여해주셨고, 정답을 맞춘 분들은 <span
-                            class="highlight-num">2,675명</span>이에요.</p>
-                </div>
-
-                <div class="note-info-card">
-                    <div class="note-tag">오늘의 롱블랙 노트</div>
-                    <h3 id="result-note-title" class="note-title"></h3>
-                    <p id="result-note-desc" class="note-desc"></p>
-                    <a id="result-note-link" href="#" target="_blank" class="read-note-btn primary-btn">롱블랙 노트 보러가기
-                        →</a>
-                </div>
-
-                <div class="result-actions">
-                    <button id="result-share-btn" class="share-btn outline-btn">결과 공유하기</button>
-                    <div id="result-next-timer" class="next-word-info"></div>
-                </div>
+                <button id="result-share-btn" class="share-btn">결과 공유하기</button>
+                <p id="result-next-timer"
+                    style="text-align: center; font-size: 12px; color: #8E8E93; margin-top: 16px;"></p>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase 및 데이터 -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -264,9 +193,7 @@
     <script src="src/game/storage.js"></script>
     <script src="src/game/auth.js"></script>
     <script src="src/game/gameLogic.js"></script>
-    <script src="src/components/Header.js"></script>
     <script src="src/components/GameBoard.js"></script>
-    <script src="src/components/Keyboard.js"></script>
     <script src="src/components/Modal.js"></script>
     <script src="src/app.js"></script>
 </body>

@@ -28,23 +28,31 @@ function initAuth() {
         const loginBtn = document.getElementById('login-btn');
         const userProfile = document.getElementById('user-profile');
         const userPhoto = document.getElementById('user-photo');
-        const userName = document.getElementById('user-name');
+        const userName = document.getElementById('user-name'); // 닉네임 표시용
 
         if (user) {
             // 로그인 완료 상태
             if (loginBtn) loginBtn.classList.add('hidden');
             if (userProfile) userProfile.classList.remove('hidden');
             if (userPhoto) userPhoto.src = user.photoURL;
-            // if (userName) userName.textContent = user.displayName.split(' ')[0];
 
-            // 아카이빙된 데이터 동기화
+            // 아카이빙된 데이터 동기화 및 닉네임 확인
             await syncUserData(user.uid);
+
+            // 닉네임 확인 및 모달 표시 로직은 syncUserData 내부 혹은 여기서 처리
+            // 여기서는 syncUserData가 닉네임 확인까지 하도록 유도
         } else {
             // 로그아웃 상태
             if (loginBtn) loginBtn.classList.remove('hidden');
             if (userProfile) userProfile.classList.add('hidden');
         }
     });
+
+    // 닉네임 저장 버튼 이벤트
+    const saveNicknameBtn = document.getElementById('save-nickname-btn');
+    if (saveNicknameBtn) {
+        saveNicknameBtn.addEventListener('click', saveNickname);
+    }
 
     // 로그인 버튼 클릭 이벤트
     const loginBtnElement = document.getElementById('login-btn');
@@ -122,15 +130,60 @@ async function syncUserData(uid) {
             if (typeof updateStatsDisplay === 'function') updateStatsDisplay();
         }
         // 기본 정보 업데이트 (항상 실행)
+        // 닉네임이 없으면 displayName(Google)을 임시로 쓰거나 비워둠.
+        // 하지만 중요한 건 닉네임 설정 모달을 띄우는 것.
+
+        let nickname = serverData?.nickname; // 서버에 저장된 닉네임 가져오기
+
+        if (!nickname) {
+            // 닉네임이 없으면 닉네임 설정 모달 띄우기
+            document.getElementById('nickname-modal').classList.remove('hidden');
+        } else {
+            // 닉네임이 있으면 환영 메시지 등 표시 가능 (선택사항)
+            // console.log(`Welcome back, ${nickname}`);
+        }
+
         await docRef.set({
-            displayName: auth.currentUser.displayName,
             photoURL: auth.currentUser.photoURL,
+            // displayName은 구글 이름이므로 덮어쓰지 않거나, nickname과 별도로 관리
+            // 여기서는 구글 이름도 일단 저장해둠
+            googleDisplayName: auth.currentUser.displayName
         }, { merge: true });
+
     } catch (e) {
         console.error("Data sync failed:", e);
     }
 }
 
+// 닉네임 저장 함수
+async function saveNickname() {
+    const input = document.getElementById('nickname-input');
+    const nickname = input.value.trim();
+    const user = auth.currentUser;
+
+    if (!user) return;
+    if (nickname.length < 2 || nickname.length > 8) {
+        alert('닉네임은 2~8자로 입력해주세요.');
+        return;
+    }
+
+    try {
+        await db.collection('users').doc(user.uid).set({
+            nickname: nickname
+        }, { merge: true });
+
+        // 모달 닫기
+        document.getElementById('nickname-modal').classList.add('hidden');
+        alert('닉네임이 설정되었습니다.');
+
+        // UI 갱신 필요시 여기서 수행
+    } catch (e) {
+        console.error("Nickname save failed:", e);
+        alert('닉네임 저장에 실패했습니다.');
+    }
+}
+
+// 아카이빙 실행 함수
 // 아카이빙 실행 함수
 async function archiveGameResult() {
     const user = auth ? auth.currentUser : null;
@@ -139,7 +192,7 @@ async function archiveGameResult() {
     const stats = loadStatistics();
     try {
         await db.collection('users').doc(user.uid).set({
-            displayName: user.displayName,
+            // displayName: user.displayName, // 구글 이름 대신
             photoURL: user.photoURL,
             stats: stats,
             lastPlayedDate: new Date().toDateString(),
