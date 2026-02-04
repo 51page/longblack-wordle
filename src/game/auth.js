@@ -180,6 +180,10 @@ async function syncUserData(uid) {
 
         if (typeof updateStatsDisplay === 'function') updateStatsDisplay();
 
+        // 추가: 동기화 후 게임 보드 및 버튼 상태 즉시 갱신
+        if (typeof updateBoardWithComposition === 'function') updateBoardWithComposition();
+        if (typeof updateHintButton === 'function') updateHintButton();
+
     } catch (e) {
         console.error("Data sync failed:", e);
     }

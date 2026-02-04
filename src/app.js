@@ -162,7 +162,13 @@ function updateBoardWithComposition(showResult = false) {
     }
 
     const activeIndex = gameState.gameStatus === 'playing' ? displayGuess.length - 1 : -1;
-    // displayGuess.length가 실제 박스 인덱스임
+
+    // 만약 게임이 끝난 상태라면(성공/실패), 정답을 칸에 채워줌
+    if (gameState.gameStatus !== 'playing') {
+        displayGuess = gameState.answer.split('');
+        showResult = true; // 결과 색상(성공/실패) 반영
+    }
+
     updateBoard(gameState.guesses, displayGuess, gameState.evaluations, gameState.wordLength, activeIndex, showResult);
 }
 
@@ -353,19 +359,22 @@ function initLogo() {
 function updateHintButton() {
     const isFinished = gameState.gameStatus !== 'playing';
     const hintBtn = document.getElementById('hint-btn');
+    const inlineHint = document.getElementById('inline-hint-content');
     if (!hintBtn) return;
 
     if (isFinished) {
         const todayWordData = getTodayWord();
         hintBtn.textContent = '오늘의 롱블랙 노트 보러가기';
         hintBtn.className = 'note-link-btn'; // 스타일 변경
-        hintBtn.onclick = () => {
+        hintBtn.onclick = (e) => {
+            if (e) e.stopPropagation();
+            // 힌트 창이 열려있다면 닫기
+            if (inlineHint) inlineHint.classList.add('hidden');
             window.open(todayWordData.url, '_blank');
         };
     } else {
         hintBtn.textContent = '힌트 보기';
         hintBtn.className = 'hint-btn';
-        const inlineHint = document.getElementById('inline-hint-content');
         hintBtn.onclick = () => {
             if (inlineHint) inlineHint.classList.remove('hidden');
         };
