@@ -109,12 +109,26 @@ async function syncUserData(uid) {
                 const localState = loadGameState();
                 // 서버에는 오늘 기록이 있는데 로컬이 없거나 진행중인 경우 -> 서버 기록으로 덮어씀
                 if (!localState || localState.gameStatus === 'playing') {
+                    const todayWordData = typeof getTodayWord === 'function' ? getTodayWord() : { word: '' };
+                    const attempts = serverData.todayAttempts || 0;
+                    const isWon = attempts <= 6;
+                    const word = todayWordData.word;
+
+                    // 정답 맞춘 계정이라면 마지막 시도에 정답을 채워줌
+                    const guesses = new Array(attempts).fill('');
+                    const evaluations = new Array(attempts).fill([]);
+
+                    if (isWon && attempts > 0 && word) {
+                        guesses[attempts - 1] = word;
+                        evaluations[attempts - 1] = new Array(word.length).fill('correct');
+                    }
+
                     const newState = {
                         date: today,
-                        wordLength: localState ? localState.wordLength : 3,
-                        guesses: new Array(serverData.todayAttempts || 0).fill(''), // 횟수만큼 빈 칸 채움 (UI용)
-                        gameStatus: serverData.todayAttempts <= 6 ? 'won' : 'lost',
-                        evaluations: []
+                        wordLength: localState ? localState.wordLength : word.length,
+                        guesses: guesses,
+                        gameStatus: isWon ? 'won' : 'lost',
+                        evaluations: evaluations
                     };
                     saveGameState(newState);
 
@@ -125,7 +139,8 @@ async function syncUserData(uid) {
 
                     window.location.reload();
                     return;
-                } else if (localState.gameStatus !== 'playing') {
+                }
+                else if (localState.gameStatus !== 'playing') {
                     // 이미 정답 맞춘 상태로 그냥 접속했을 때도 메시지 표시
                     if (typeof showMessage === 'function') {
                         setTimeout(() => showMessage('오늘 문제를 풀었습니다. 내일 또 도전하세요', 4000), 500);

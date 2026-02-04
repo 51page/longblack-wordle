@@ -103,7 +103,7 @@ function initializeGame() {
     updateBoardWithComposition();
 
     if (gameState.gameStatus !== 'playing') {
-        handleGameEnd();
+        handleGameEnd(false); // 이미 종료된 상태이므로 모달 띄우지 않음
     }
 
     // 물리 키보드 포커스 유지
@@ -211,24 +211,26 @@ async function submitGuess() {
     isProcessing = false;
 
     if (gameState.gameStatus !== 'playing') {
-        handleGameEnd();
-        updateHintButton(); // 상태 변경 시 버튼도 갱신
+        handleGameEnd(true); // 방금 종료되었으므로 모달 띄움
+        updateHintButton();
     }
 
     saveCurrentState();
 }
 
 // 게임 종료 처리
-function handleGameEnd() {
+function handleGameEnd(showModal = true) {
     const won = gameState.gameStatus === 'won';
     const guessCount = gameState.guesses.length;
 
+    // 통계 및 서버 저장 (이미 저장이 되어있을 수도 있지만 안전하게 호출)
     updateStatistics(won, guessCount);
 
-    // 서버에 결과 아카이빙 (로그인 상태일 때)
     if (typeof archiveGameResult === 'function') {
         archiveGameResult(won, guessCount);
     }
+
+    if (!showModal) return;
 
     setTimeout(() => {
         if (won) {
