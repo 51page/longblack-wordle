@@ -739,10 +739,18 @@ body {
 
 /* 리더보드 섹션 */
 .leaderboard-section {
-    margin-bottom: 32px;
+    margin-top: 32px;
+    padding: 24px;
     background-color: #F8F9FA;
-    border-radius: 12px;
-    padding: 20px;
+    border-radius: 20px;
+    border-top: 1px solid var(--color-border);
+}
+
+.leaderboard-section h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--color-text);
 }
 
 .leaderboard-list {
@@ -751,56 +759,77 @@ body {
     gap: 12px;
 }
 
-.loading-spinner {
-    text-align: center;
-    font-size: 13px;
-    color: #999;
+.rank-item-group {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.rank-item {
+.rank-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 8px 12px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.rank-header:hover {
+    background-color: #F8F9FA;
 }
 
 .rank-number {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 800;
-    color: var(--color-correct);
-    min-width: 20px;
+    color: var(--color-primary);
+    width: 32px;
 }
 
-.rank-photo {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.rank-name {
+.rank-info {
     flex: 1;
-    font-size: 14px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.rank-value {
     font-size: 14px;
     font-weight: 700;
     color: var(--color-text);
 }
 
-.rank-value span {
-    font-size: 10px;
+.rank-count {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+}
+
+.rank-users-list {
+    border-top: 1px solid #F2F2F7;
+    background-color: #FAFAFB;
+    padding: 12px 0;
+    display: none;
+}
+
+.rank-users-list.active {
+    display: block;
+}
+
+.user-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 48px;
+}
+
+.user-photo {
+    width: 26px !important;
+    height: 26px !important;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+.user-name {
+    font-size: 14px;
     font-weight: 500;
-    color: #999;
-    margin-left: 2px;
+    color: var(--color-text);
 }
 
 .hint-container {
