@@ -62,8 +62,7 @@ function initAuth() {
         userProfileElement.addEventListener('click', () => {
             if (confirm('로그아웃 하시겠습니까?')) {
                 auth.signOut().then(() => {
-                    // 로그아웃 시 로컬 게임 상태도 리셋하는 것이 안전함 (선택사항)
-                    // localStorage.removeItem('longblack-wordle-state');
+                    localStorage.removeItem('longblack-wordle-state');
                     window.location.reload();
                 });
             }
@@ -105,24 +104,24 @@ async function syncUserData(uid) {
 
             saveStatistics(mergedStats);
 
-            // 오늘 이미 참여했는지 확인
+            // 계정 전환 및 오늘 참여 여부 확인
             if (serverData.lastPlayedDate === today) {
                 const localState = loadGameState();
-                // 서버 기록이 있는데 로컬 상태가 일치하지 않으면 동기화 (또는 로컬이 이미 끝났는데 서버와 다를 경우)
+                // 서버에는 오늘 기록이 있는데 로컬이 없거나 진행중인 경우 -> 서버 기록으로 덮어씀
                 if (!localState || localState.gameStatus === 'playing') {
                     const newState = {
                         date: today,
-                        wordLength: localState ? localState.wordLength : 3, // 기본값
-                        guesses: localState ? localState.guesses : [],
+                        wordLength: localState ? localState.wordLength : 3,
+                        guesses: new Array(serverData.todayAttempts || 0).fill(''), // 횟수만큼 빈 칸 채움 (UI용)
                         gameStatus: serverData.todayAttempts <= 6 ? 'won' : 'lost',
-                        evaluations: localState ? localState.evaluations : []
+                        evaluations: []
                     };
                     saveGameState(newState);
                     window.location.reload();
-                    return; // 리로드 될 것이므로 중단
+                    return;
                 }
             } else {
-                // 사용자가 오늘 참여하지 않았는데 로컬 상태가 "종료"라면 이전 계정의 흔적이므로 리셋
+                // 서버에는 오늘 기록이 없는데 로컬은 종료 상태인 경우 -> 다른 계정의 흔적이므로 리셋
                 const localState = loadGameState();
                 if (localState && localState.gameStatus !== 'playing') {
                     localStorage.removeItem('longblack-wordle-state');
@@ -131,7 +130,7 @@ async function syncUserData(uid) {
                 }
             }
         } else {
-            // 서버에 데이터가 없는 새 사용자인데 로컬 상태가 종료라면 리셋
+            // 서버에 데이터가 아예 없는 새 사용자인 경우
             const localState = loadGameState();
             if (localState && localState.gameStatus !== 'playing') {
                 localStorage.removeItem('longblack-wordle-state');
@@ -146,10 +145,11 @@ async function syncUserData(uid) {
             document.getElementById('nickname-modal')?.classList.remove('hidden');
         }
 
-        // 기본 정보 업데이트 (항상 실행)
+        // 기본 정보 업데이트
         await docRef.set({
             photoURL: auth.currentUser.photoURL,
-            googleDisplayName: auth.currentUser.displayName
+            googleDisplayName: auth.currentUser.displayName,
+            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
 
         if (typeof updateStatsDisplay === 'function') updateStatsDisplay();
@@ -181,7 +181,6 @@ async function saveNickname() {
         if (typeof updateStatsDisplay === 'function') updateStatsDisplay();
     } catch (e) {
         console.error("Nickname save failed:", e);
-        alert('닉네임 저장에 실패했습니다.');
     }
 }
 
@@ -201,28 +200,33 @@ async function archiveGameResult(won, attempts) {
             todayAttempts: won ? attempts : 7,
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
-        console.log("Archive success!");
+        console.log("Archive success with attempts:", attempts);
+
+        // 데이터 저장 직후 리더보드 갱신 유도
+        if (typeof updateLeaderboardDisplay === 'function') {
+            setTimeout(updateLeaderboardDisplay, 500);
+        }
     } catch (e) {
         console.error("Archive failed:", e);
     }
 }
 
-// 리더보드 데이터 가져오기 (오늘 참여자 중 시도 횟수 순)
+// 리더보드 데이터 가져오기 (보다 안정적인 쿼리 방식)
 async function fetchLeaderboard() {
     if (!db) return [];
     try {
         const today = new Date().toDateString();
+        // 복합 인덱스 오류를 피하기 위해 equality 쿼리만 사용하고 나머지는 클라이언트에서 처리
         const snapshot = await db.collection('users')
             .where('lastPlayedDate', '==', today)
-            .where('todayAttempts', '<=', 6)
-            .orderBy('todayAttempts', 'asc')
-            .limit(50)
+            .limit(100)
             .get();
 
-        return snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+        const users = snapshot.docs.map(doc => doc.data());
+        // 정답자만 필터링 (1~6회 시도) 후 정렬
+        return users
+            .filter(u => u.todayAttempts && u.todayAttempts <= 6)
+            .sort((a, b) => a.todayAttempts - b.todayAttempts);
     } catch (e) {
         console.error("Leaderboard fetch failed:", e);
         return [];
@@ -244,16 +248,12 @@ async function updateLeaderboardDisplay() {
     // 시도 횟수별 그룹화
     const groups = {};
     rankings.forEach(user => {
-        const attempts = user.todayAttempts || 7; // 안전장치
+        const attempts = user.todayAttempts;
         if (!groups[attempts]) groups[attempts] = [];
         groups[attempts].push(user);
     });
 
-    // 성공한 사람(1~6회)만 필터링하여 정렬
-    const sortedAttempts = Object.keys(groups)
-        .map(Number)
-        .filter(a => a <= 6)
-        .sort((a, b) => a - b);
+    const sortedAttempts = Object.keys(groups).sort((a, b) => Number(a) - Number(b));
 
     leaderboardList.innerHTML = sortedAttempts.map((attempts, index) => {
         const users = groups[attempts];
