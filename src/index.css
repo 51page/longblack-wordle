@@ -175,7 +175,20 @@ body {
 #life-gauge-container {
     width: 100%;
     max-width: 400px;
-    margin-bottom: 24px;
+    margin-bottom: 40px;
+    /* 문제 영역과의 간격 확보 */
+    background-color: var(--color-white);
+    padding: 16px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.instruction-text {
+    font-size: 13px;
+    color: var(--color-primary);
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-align: left;
 }
 
 .life-gauge-header {
@@ -218,14 +231,6 @@ body {
     animation: pulse 1s infinite;
 }
 
-.instruction-text {
-    font-size: 14px;
-    color: var(--color-primary);
-    font-weight: 700;
-    margin-bottom: 8px;
-    text-align: center;
-}
-
 @keyframes pulse {
     0% {
         opacity: 1;
@@ -248,14 +253,19 @@ body {
 
 .question-title {
     display: block;
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 800;
     color: var(--color-primary);
-    margin-bottom: 32px;
+    margin-bottom: 12px;
+    /* 간격 줄임 */
     opacity: 0.9;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    text-align: left;
+    /* 왼쪽 정렬로 문장과 연결 */
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px;
+    letter-spacing: -0.01em;
 }
 
 .sentence-display {
@@ -282,8 +292,20 @@ body {
 
 @media (max-width: 480px) {
     .sentence-display {
-        font-size: 22px;
+        font-size: 24px;
+        /* 모바일에서도 충분히 크게 */
         padding: 0 16px;
+        line-height: 1.5;
+    }
+
+    .question-title {
+        font-size: 14px;
+        padding: 0 16px;
+        margin-bottom: 8px;
+    }
+
+    #life-gauge-container {
+        margin-bottom: 32px;
     }
 }
 
