@@ -95,30 +95,6 @@ function updateBadgeDisplay(stats) {
     `).join('');
 }
 
-// 리더보드 표시 업데이트
-async function updateLeaderboardDisplay() {
-    const leaderboardList = document.getElementById('leaderboard-list');
-    if (!leaderboardList) return;
-
-    // fetchLeaderboard는 auth.js에 정의되어 있음
-    if (typeof fetchLeaderboard !== 'function') return;
-
-    const rankings = await fetchLeaderboard();
-
-    if (rankings.length === 0) {
-        leaderboardList.innerHTML = '<div class="loading-spinner">로그인 후 랭킹을 확인해보세요!</div>';
-        return;
-    }
-
-    leaderboardList.innerHTML = rankings.map((user, index) => `
-        <div class="rank-item">
-            <div class="rank-number">${index + 1}</div>
-            <img class="rank-photo" src="${user.photoURL || 'https://www.gravatar.com/avatar/0000?d=mp'}" alt="">
-            <div class="rank-name">${user.displayName || '익명의 러너'}</div>
-            <div class="rank-value">${user.stats?.maxStreak || 0}<span>연속</span></div>
-        </div>
-    `).join('');
-}
 
 function showShareSection(guesses, evaluations, answer) {
     const shareSection = document.getElementById('share-section');

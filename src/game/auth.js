@@ -28,7 +28,6 @@ function initAuth() {
         const loginBtn = document.getElementById('login-btn');
         const userProfile = document.getElementById('user-profile');
         const userPhoto = document.getElementById('user-photo');
-        const userName = document.getElementById('user-name'); // 닉네임 표시용
 
         if (user) {
             // 로그인 완료 상태
@@ -36,11 +35,8 @@ function initAuth() {
             if (userProfile) userProfile.classList.remove('hidden');
             if (userPhoto) userPhoto.src = user.photoURL;
 
-            // 아카이빙된 데이터 동기화 및 닉네임 확인
+            // 데이터 동기화
             await syncUserData(user.uid);
-
-            // 닉네임 확인 및 모달 표시 로직은 syncUserData 내부 혹은 여기서 처리
-            // 여기서는 syncUserData가 닉네임 확인까지 하도록 유도
         } else {
             // 로그아웃 상태
             if (loginBtn) loginBtn.classList.remove('hidden');
@@ -65,7 +61,11 @@ function initAuth() {
     if (userProfileElement) {
         userProfileElement.addEventListener('click', () => {
             if (confirm('로그아웃 하시겠습니까?')) {
-                auth.signOut();
+                auth.signOut().then(() => {
+                    // 로그아웃 시 로컬 게임 상태도 리셋하는 것이 안전함 (선택사항)
+                    // localStorage.removeItem('longblack-wordle-state');
+                    window.location.reload();
+                });
             }
         });
     }
@@ -87,11 +87,12 @@ async function syncUserData(uid) {
     try {
         const docRef = db.collection('users').doc(uid);
         const doc = await docRef.get();
-
+        const today = new Date().toDateString();
         const localStats = loadStatistics();
 
+        let serverData = null;
         if (doc.exists) {
-            const serverData = doc.data();
+            serverData = doc.data();
             const serverStats = serverData.stats || {};
 
             const mergedStats = {
@@ -104,51 +105,54 @@ async function syncUserData(uid) {
 
             saveStatistics(mergedStats);
 
-            // 오늘 이미 참여했는지 확인 (다른 기기에서 플레이한 경우)
-            const today = new Date().toDateString();
+            // 오늘 이미 참여했는지 확인
             if (serverData.lastPlayedDate === today) {
                 const localState = loadGameState();
+                // 서버 기록이 있는데 로컬 상태가 일치하지 않으면 동기화 (또는 로컬이 이미 끝났는데 서버와 다를 경우)
                 if (!localState || localState.gameStatus === 'playing') {
-                    // 서버에 기록이 있는데 로컬은 진행 중이라면 종료 상태로 강제 전환
                     const newState = {
                         date: today,
-                        wordLength: localState ? localState.wordLength : 4,
+                        wordLength: localState ? localState.wordLength : 3, // 기본값
                         guesses: localState ? localState.guesses : [],
-                        gameStatus: 'won', // 참여 완료 상태로 간주
+                        gameStatus: serverData.todayAttempts <= 6 ? 'won' : 'lost',
                         evaluations: localState ? localState.evaluations : []
                     };
                     saveGameState(newState);
-
-                    // UI 즉시 반영을 위해 페이지 새로고침 (가장 확실한 방법)
-                    // 또는 initializeGame을 다시 호출할 수 있으나 상태 전이가 복잡하므로 리로드 권장
-                    if (localState && localState.gameStatus === 'playing') {
-                        window.location.reload();
-                    }
+                    window.location.reload();
+                    return; // 리로드 될 것이므로 중단
+                }
+            } else {
+                // 사용자가 오늘 참여하지 않았는데 로컬 상태가 "종료"라면 이전 계정의 흔적이므로 리셋
+                const localState = loadGameState();
+                if (localState && localState.gameStatus !== 'playing') {
+                    localStorage.removeItem('longblack-wordle-state');
+                    window.location.reload();
+                    return;
                 }
             }
-
-            if (typeof updateStatsDisplay === 'function') updateStatsDisplay();
-        }
-        // 기본 정보 업데이트 (항상 실행)
-        // 닉네임이 없으면 displayName(Google)을 임시로 쓰거나 비워둠.
-        // 하지만 중요한 건 닉네임 설정 모달을 띄우는 것.
-
-        let nickname = serverData?.nickname; // 서버에 저장된 닉네임 가져오기
-
-        if (!nickname) {
-            // 닉네임이 없으면 닉네임 설정 모달 띄우기
-            document.getElementById('nickname-modal').classList.remove('hidden');
         } else {
-            // 닉네임이 있으면 환영 메시지 등 표시 가능 (선택사항)
-            // console.log(`Welcome back, ${nickname}`);
+            // 서버에 데이터가 없는 새 사용자인데 로컬 상태가 종료라면 리셋
+            const localState = loadGameState();
+            if (localState && localState.gameStatus !== 'playing') {
+                localStorage.removeItem('longblack-wordle-state');
+                window.location.reload();
+                return;
+            }
         }
 
+        // 닉네임 설정 확인
+        let nickname = serverData?.nickname;
+        if (!nickname) {
+            document.getElementById('nickname-modal')?.classList.remove('hidden');
+        }
+
+        // 기본 정보 업데이트 (항상 실행)
         await docRef.set({
             photoURL: auth.currentUser.photoURL,
-            // displayName은 구글 이름이므로 덮어쓰지 않거나, nickname과 별도로 관리
-            // 여기서는 구글 이름도 일단 저장해둠
             googleDisplayName: auth.currentUser.displayName
         }, { merge: true });
+
+        if (typeof updateStatsDisplay === 'function') updateStatsDisplay();
 
     } catch (e) {
         console.error("Data sync failed:", e);
@@ -172,11 +176,9 @@ async function saveNickname() {
             nickname: nickname
         }, { merge: true });
 
-        // 모달 닫기
-        document.getElementById('nickname-modal').classList.add('hidden');
+        document.getElementById('nickname-modal')?.classList.add('hidden');
         alert('닉네임이 설정되었습니다.');
-
-        // UI 갱신 필요시 여기서 수행
+        if (typeof updateStatsDisplay === 'function') updateStatsDisplay();
     } catch (e) {
         console.error("Nickname save failed:", e);
         alert('닉네임 저장에 실패했습니다.');
@@ -196,7 +198,7 @@ async function archiveGameResult(won, attempts) {
             photoURL: user.photoURL,
             stats: stats,
             lastPlayedDate: today,
-            todayAttempts: won ? attempts : 7, // 실패는 7회로 처리
+            todayAttempts: won ? attempts : 7,
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
         console.log("Archive success!");
@@ -212,7 +214,7 @@ async function fetchLeaderboard() {
         const today = new Date().toDateString();
         const snapshot = await db.collection('users')
             .where('lastPlayedDate', '==', today)
-            .where('todayAttempts', '<=', 6) // 성공한 사람만
+            .where('todayAttempts', '<=', 6)
             .orderBy('todayAttempts', 'asc')
             .limit(50)
             .get();
@@ -239,15 +241,19 @@ async function updateLeaderboardDisplay() {
         return;
     }
 
-    // 시도 횟수별로 그룹화
+    // 시도 횟수별 그룹화
     const groups = {};
     rankings.forEach(user => {
-        const attempts = user.todayAttempts;
+        const attempts = user.todayAttempts || 7; // 안전장치
         if (!groups[attempts]) groups[attempts] = [];
         groups[attempts].push(user);
     });
 
-    const sortedAttempts = Object.keys(groups).sort((a, b) => a - b);
+    // 성공한 사람(1~6회)만 필터링하여 정렬
+    const sortedAttempts = Object.keys(groups)
+        .map(Number)
+        .filter(a => a <= 6)
+        .sort((a, b) => a - b);
 
     leaderboardList.innerHTML = sortedAttempts.map((attempts, index) => {
         const users = groups[attempts];
@@ -258,7 +264,7 @@ async function updateLeaderboardDisplay() {
                 <div class="rank-header" onclick="this.nextElementSibling.classList.toggle('active')">
                     <div class="rank-number">${rank}위</div>
                     <div class="rank-info">${attempts}회 만에 성공</div>
-                    <div class="rank-count">${users.length}명 ></div>
+                    <div class="rank-count">${users.length}명 &gt;</div>
                 </div>
                 <div class="rank-users-list">
                     ${users.map(u => `
