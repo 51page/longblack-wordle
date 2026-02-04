@@ -223,6 +223,11 @@ function handleGameEnd() {
 
     updateStatistics(won, guessCount);
 
+    // 서버에 결과 아카이빙 (로그인 상태일 때)
+    if (typeof archiveGameResult === 'function') {
+        archiveGameResult(won, guessCount);
+    }
+
     setTimeout(() => {
         if (won) {
             showMessage('정답입니다!', 3000);

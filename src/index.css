@@ -258,7 +258,9 @@ body {
 
 .sentence-display {
     font-size: 26px;
-    font-weight: 700;
+    /* +2 증가 */
+    font-weight: 500;
+    /* 볼드 제거 */
     line-height: 1.6;
     color: var(--color-text);
     word-break: keep-all;

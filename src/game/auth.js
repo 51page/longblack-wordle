@@ -184,18 +184,19 @@ async function saveNickname() {
 }
 
 // 아카이빙 실행 함수
-// 아카이빙 실행 함수
-async function archiveGameResult() {
+async function archiveGameResult(won, attempts) {
     const user = auth ? auth.currentUser : null;
     if (!user || !db) return;
 
     const stats = loadStatistics();
+    const today = new Date().toDateString();
+
     try {
         await db.collection('users').doc(user.uid).set({
-            // displayName: user.displayName, // 구글 이름 대신
             photoURL: user.photoURL,
             stats: stats,
-            lastPlayedDate: new Date().toDateString(),
+            lastPlayedDate: today,
+            todayAttempts: won ? attempts : 7, // 실패는 7회로 처리
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
         console.log("Archive success!");
@@ -204,13 +205,16 @@ async function archiveGameResult() {
     }
 }
 
-// 리더보드 데이터 가져오기
+// 리더보드 데이터 가져오기 (오늘 참여자 중 시도 횟수 순)
 async function fetchLeaderboard() {
     if (!db) return [];
     try {
+        const today = new Date().toDateString();
         const snapshot = await db.collection('users')
-            .orderBy('stats.maxStreak', 'desc')
-            .limit(5)
+            .where('lastPlayedDate', '==', today)
+            .where('todayAttempts', '<=', 6) // 성공한 사람만
+            .orderBy('todayAttempts', 'asc')
+            .limit(50)
             .get();
 
         return snapshot.docs.map(doc => ({
@@ -221,4 +225,50 @@ async function fetchLeaderboard() {
         console.error("Leaderboard fetch failed:", e);
         return [];
     }
+}
+
+// 리더보드 UI 업데이트
+async function updateLeaderboardDisplay() {
+    const leaderboardList = document.getElementById('leaderboard-list');
+    if (!leaderboardList) return;
+
+    const rankings = await fetchLeaderboard();
+
+    if (rankings.length === 0) {
+        leaderboardList.innerHTML = '<div class="loading-spinner">오늘 정답을 맞힌 첫 번째 주인공이 되어보세요!</div>';
+        return;
+    }
+
+    // 시도 횟수별로 그룹화
+    const groups = {};
+    rankings.forEach(user => {
+        const attempts = user.todayAttempts;
+        if (!groups[attempts]) groups[attempts] = [];
+        groups[attempts].push(user);
+    });
+
+    const sortedAttempts = Object.keys(groups).sort((a, b) => a - b);
+
+    leaderboardList.innerHTML = sortedAttempts.map((attempts, index) => {
+        const users = groups[attempts];
+        const rank = index + 1;
+
+        return `
+            <div class="rank-item-group">
+                <div class="rank-header" onclick="this.nextElementSibling.classList.toggle('active')">
+                    <div class="rank-number">${rank}위</div>
+                    <div class="rank-info">${attempts}회 만에 성공</div>
+                    <div class="rank-count">${users.length}명 ></div>
+                </div>
+                <div class="rank-users-list">
+                    ${users.map(u => `
+                        <div class="user-row">
+                            <img class="user-photo" src="${u.photoURL || 'https://www.gravatar.com/avatar/0000?d=mp'}" alt="">
+                            <div class="user-name">${u.nickname || '익명의 러너'}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }).join('');
 }
