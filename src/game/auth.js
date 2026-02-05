@@ -56,18 +56,19 @@ function initAuth() {
         loginBtnElement.addEventListener('click', loginWithGoogle);
     }
 
-// 프로필 클릭 시 로그아웃
-const userProfileElement = document.getElementById('user-profile');
-if (userProfileElement) {
-    userProfileElement.addEventListener('click', () => {
-        if (confirm('로그아웃 하시겠습니까?')) {
-            auth.signOut().then(() => {
-                localStorage.removeItem('longblack-wordle-state');
-                localStorage.removeItem('last-uid'); // 이 부분을 추가하세요
-                window.location.reload();
-            });
-        }
-    });
+    // 프로필 클릭 시 로그아웃
+    const userProfileElement = document.getElementById('user-profile');
+    if (userProfileElement) {
+        userProfileElement.addEventListener('click', () => {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                auth.signOut().then(() => {
+                    localStorage.removeItem('longblack-wordle-state');
+                    localStorage.removeItem('last-uid');
+                    window.location.reload();
+                });
+            }
+        });
+    }
 }
 
 // 구글 로그인 실행
@@ -82,6 +83,16 @@ function loginWithGoogle() {
 // 서버와 데이터 동기화
 async function syncUserData(uid) {
     if (!db) return;
+
+    // 유저 전환 체크 로직 (무한 새로고침 방지 포함)
+    const lastUid = localStorage.getItem('last-uid');
+    if (lastUid !== null && lastUid !== uid) {
+        localStorage.removeItem('longblack-wordle-state');
+        localStorage.setItem('last-uid', uid);
+        window.location.reload();
+        return;
+    }
+    localStorage.setItem('last-uid', uid);
 
     try {
         const docRef = db.collection('users').doc(uid);
@@ -308,4 +319,3 @@ async function updateLeaderboardDisplay() {
         `;
     }).join('');
 }
-
