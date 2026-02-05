@@ -9,7 +9,8 @@ let gameState = {
     currentInput: { cho: '', jung: '', jong: '' },  // 현재 조합 중인 글자
     gameStatus: 'playing',
     evaluations: [],
-    keyboardState: {}
+    keyboardState: {},
+    isFocused: false
 };
 
 // 초기화
@@ -161,7 +162,17 @@ function updateBoardWithComposition(showResult = false) {
         }
     }
 
-    const activeIndex = gameState.gameStatus === 'playing' ? displayGuess.length - 1 : -1;
+    const isComposing = currentInput.cho !== '';
+    let activeIndex = -1;
+
+    if (gameState.gameStatus === 'playing') {
+        if (isComposing) {
+            activeIndex = displayGuess.length - 1;
+        } else {
+            activeIndex = displayGuess.length;
+            if (activeIndex >= gameState.wordLength) activeIndex = gameState.wordLength - 1;
+        }
+    }
 
     // 만약 게임이 끝난 상태라면(성공/실패), 정답을 칸에 채워줌
     if (gameState.gameStatus !== 'playing') {
@@ -169,7 +180,7 @@ function updateBoardWithComposition(showResult = false) {
         showResult = true; // 결과 색상(성공/실패) 반영
     }
 
-    updateBoard(gameState.guesses, displayGuess, gameState.evaluations, gameState.wordLength, activeIndex, showResult);
+    updateBoard(gameState.guesses, displayGuess, gameState.evaluations, gameState.wordLength, activeIndex, showResult, gameState.isFocused);
 }
 
 // 추측 제출
@@ -343,6 +354,19 @@ function initHiddenInput() {
 
     // 초기 포커스
     setTimeout(() => input.focus(), 500);
+
+    // 포커스 상태 관리
+    input.addEventListener('focus', () => {
+        gameState.isFocused = true;
+        document.body.classList.add('keyboard-active');
+        updateBoardWithComposition();
+    });
+
+    input.addEventListener('blur', () => {
+        gameState.isFocused = false;
+        document.body.classList.remove('keyboard-active');
+        updateBoardWithComposition();
+    });
 
     updateHintButton();
 }

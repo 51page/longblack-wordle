@@ -31,7 +31,7 @@ function updateLifeGauge(usedGuesses, maxGuesses = 5) {
     }
 }
 
-function updateBoard(guesses, currentGuess, evaluations, wordLength, activeIndex, showResult = false) {
+function updateBoard(guesses, currentGuess, evaluations, wordLength, activeIndex, showResult = false, isFocused = false) {
     // GameBoard.js의 주 역할은 이제 문장 내의 '글자 박스'들을 업데이트하는 것입니다.
     const charTiles = document.querySelectorAll('.char-tile');
     if (charTiles.length === 0) return;
@@ -45,7 +45,7 @@ function updateBoard(guesses, currentGuess, evaluations, wordLength, activeIndex
         tile.textContent = char;
 
         // 클래스 초기화
-        tile.classList.remove('active', 'filled', 'correct', 'present', 'absent');
+        tile.classList.remove('active', 'focused', 'filled', 'correct', 'present', 'absent');
 
         if (char) {
             tile.classList.add('filled');
@@ -56,6 +56,9 @@ function updateBoard(guesses, currentGuess, evaluations, wordLength, activeIndex
             tile.classList.add('flip');
         } else if (i === activeIndex) {
             tile.classList.add('active');
+            if (isFocused) {
+                tile.classList.add('focused');
+            }
         }
     });
 
