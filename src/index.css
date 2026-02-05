@@ -292,16 +292,25 @@ body {
 
 @media (max-width: 480px) {
     .sentence-display {
-        font-size: 24px;
-        /* 모바일에서도 충분히 크게 */
+        font-size: 21px;
+        /* 모바일에서 가독성 확보를 위해 상향 조정 */
         padding: 0 16px;
-        line-height: 1.5;
+        line-height: 1.8;
+        /* 줄간격을 넓혀 텍스트와 빈칸 사이 여유 확보 */
+        word-break: keep-all;
+    }
+
+    .char-tile {
+        width: 32px;
+        /* 텍스트 크기와 조화를 이루도록 축소 */
+        height: 32px;
+        font-size: 18px;
     }
 
     .question-title {
         font-size: 14px;
         padding: 0 16px;
-        margin-bottom: 8px;
+        margin-bottom: 12px;
     }
 
     #life-gauge-container {
@@ -637,10 +646,6 @@ body {
 
     .question-section {
         padding: 15px;
-    }
-
-    .sentence-display {
-        font-size: 16px;
     }
 }
 
