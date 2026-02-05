@@ -56,18 +56,18 @@ function initAuth() {
         loginBtnElement.addEventListener('click', loginWithGoogle);
     }
 
-    // 프로필 클릭 시 로그아웃
-    const userProfileElement = document.getElementById('user-profile');
-    if (userProfileElement) {
-        userProfileElement.addEventListener('click', () => {
-            if (confirm('로그아웃 하시겠습니까?')) {
-                auth.signOut().then(() => {
-                    localStorage.removeItem('longblack-wordle-state');
-                    window.location.reload();
-                });
-            }
-        });
-    }
+// 프로필 클릭 시 로그아웃
+const userProfileElement = document.getElementById('user-profile');
+if (userProfileElement) {
+    userProfileElement.addEventListener('click', () => {
+        if (confirm('로그아웃 하시겠습니까?')) {
+            auth.signOut().then(() => {
+                localStorage.removeItem('longblack-wordle-state');
+                localStorage.removeItem('last-uid'); // 이 부분을 추가하세요
+                window.location.reload();
+            });
+        }
+    });
 }
 
 // 구글 로그인 실행
@@ -308,3 +308,4 @@ async function updateLeaderboardDisplay() {
         `;
     }).join('');
 }
+
