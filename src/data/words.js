@@ -22,18 +22,18 @@ const WORDS_DATA = [
         sentence: '“남이 내 집의 경계를 넘어 들어올 때, 비로소 내  <span class="sentence-blank">취향</span>을 확인할 수 있습니다. 내 공간을 소개하면서 칭찬과 분석을 받다 보면, ‘아, 이런 게 눈에 들어오는구나’라고 확인하게 되는 거죠. 그렇게 나를 더 깊이 알아갈 수 있습니다.”'
     },
     {
-        word: '찰스핸디',
-        original: '찰스 핸디',
-        description: '다정한 경영철학자, 포트폴리오 인생',
-        url: 'https://longblack.co/note/1118',
-        sentence: '“다정한 경영철학자 <span class="sentence-blank">찰스핸디</span>의 포트폴리오 인생을 만나보세요.”'
+        word: '취향',
+        original: '공간 감상 수업 6 : 내 집도 영감이 된다, 나를 담는 공간 만들기',
+        description: '“공간에 나를 담는 가장 확실한 방법이 있습니다. 바로 ‘나의 호기심을 기록하는 것’. 취향은 어느 날 하는 쇼핑 한두 번으로 생기지 않아요. 내가 무엇에 반응하고 설레는지를 기록한 시간이 쌓여야 만들어지죠. "',
+        url: 'https://longblack.co/note/1882',
+        sentence: '“남이 내 집의 경계를 넘어 들어올 때, 비로소 내  <span class="sentence-blank">취향</span>을 확인할 수 있습니다. 내 공간을 소개하면서 칭찬과 분석을 받다 보면, ‘아, 이런 게 눈에 들어오는구나’라고 확인하게 되는 거죠. 그렇게 나를 더 깊이 알아갈 수 있습니다.”'
     },
     {
-        word: '곽민수',
-        original: '곽민수',
-        description: '이집트 고고학자, 대세감 만드는 법',
-        url: 'https://longblack.co/note/1116',
-        sentence: '“이집트 고고학자 <span class="sentence-blank">곽민수</span>가 말하는 대세감 만드는 법에 대해 알아보세요.”'
+        word: '취향',
+        original: '공간 감상 수업 6 : 내 집도 영감이 된다, 나를 담는 공간 만들기',
+        description: '“공간에 나를 담는 가장 확실한 방법이 있습니다. 바로 ‘나의 호기심을 기록하는 것’. 취향은 어느 날 하는 쇼핑 한두 번으로 생기지 않아요. 내가 무엇에 반응하고 설레는지를 기록한 시간이 쌓여야 만들어지죠. "',
+        url: 'https://longblack.co/note/1882',
+        sentence: '“남이 내 집의 경계를 넘어 들어올 때, 비로소 내  <span class="sentence-blank">취향</span>을 확인할 수 있습니다. 내 공간을 소개하면서 칭찬과 분석을 받다 보면, ‘아, 이런 게 눈에 들어오는구나’라고 확인하게 되는 거죠. 그렇게 나를 더 깊이 알아갈 수 있습니다.”'
     },
     { word: '이하성', original: '이하성', description: '타협하지 않는 셰프, 요리 괴물의 성장', url: 'https://longblack.co/note/1113' },
     { word: '후덕죽', original: '후덕죽', description: '현역 셰프, 멈추지 않는 즐거움', url: 'https://longblack.co/note/1111' },
@@ -129,6 +129,7 @@ function isValidWord(word) {
     const koreanRegex = /^[가-힣]+$/;
     return koreanRegex.test(word);
 }
+
 
 
 
