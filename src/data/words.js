@@ -8,11 +8,11 @@ const WORDS_DATA = [
         sentence: 'AI는 양날의 검이에요. AI가 주는 답을 그대로 받아들이면 당연히 나의 <span class="sentence-blank">주도성</span>이 떨어질 겁니다. 내가 원하는 답에 가까워지도록 괴롭혀야죠.'
     },
     {
-        word: 'ADHD',
-        original: '가짜 ADHD : 우리는 왜 자신의 집중력에 만족하지 못할까?',
-        description: '모든 문제를 ADHD 탓으로 돌려선 안 됩니다. 사실 복잡한 사회에서 아무런 어려움 없이 온전히 집중하며 사는 건 어렵습니다.',
-        url: 'https://longblack.co/note/1859',
-        sentence: '“모든 문제를 <span class="sentence-blank">ADHD</span> 탓으로 돌려선 안 됩니다. 사실 복잡한 사회에서 아무런 어려움 없이 온전히 집중하며 사는 건 어렵습니다.”'
+        word: '호기심',
+        original: '공간 감상 수업 6 : 내 집도 영감이 된다, 나를 담는 공간 만들기',
+        description: '“공간에 나를 담는 가장 확실한 방법이 있습니다. 바로 ‘나의 호기심을 기록하는 것’. 취향은 어느 날 하는 쇼핑 한두 번으로 생기지 않아요. 내가 무엇에 반응하고 설레는지를 기록한 시간이 쌓여야 만들어지죠. ',
+        url: 'https://longblack.co/note/1882',
+        sentence: '“공간에 나를 담는 가장 확실한 방법이 있습니다. 바로 ‘나의 <span class="sentence-blank">호기심</span> 을 기록하는 것’. 취향은 어느 날 하는 쇼핑 한두 번으로 생기지 않아요. 내가 무엇에 반응하고 설레는지를 기록한 시간이 쌓여야 만들어지죠.”'
     },
     {
         word: '의지력',
@@ -129,3 +129,4 @@ function isValidWord(word) {
     const koreanRegex = /^[가-힣]+$/;
     return koreanRegex.test(word);
 }
+
