@@ -145,8 +145,17 @@ function checkGameEnd(guesses, answer, maxGuesses = 5) {
 
 // 공유 텍스트 생성
 function generateShareText(guesses, evaluations, wordLength, gameNumber) {
-    const resultStatus = guesses[guesses.length - 1] === getTodayWord().word ? `${guesses.length}/5` : 'X/5';
-    let text = `LB 문장 퍼즐 #${gameNumber} ${resultStatus}\n\n`;
+    const isWon = guesses[guesses.length - 1] === getTodayWord().word;
+    const guessCount = guesses.length;
+    const totalChances = 5;
+
+    let text = `LB 문장 퍼즐 #${gameNumber}\n`;
+
+    if (isWon) {
+        text += `${totalChances}번의 기회 중 ${guessCount}번 만에 정답을 맞췄어요!\n\n`;
+    } else {
+        text += `아쉽게도 정답을 맞추지 못했어요.\n\n`;
+    }
 
     evaluations.forEach(evaluation => {
         const line = evaluation.map(status => {
@@ -157,7 +166,9 @@ function generateShareText(guesses, evaluations, wordLength, gameNumber) {
         text += line + '\n';
     });
 
-    text += '\n매일 새로운 롱블랙 노트를 맞춰보세요!';
+    text += '\n당신도 문장 퍼즐에 도전해보세요!\n';
+    text += window.location.origin + window.location.pathname;
+
     return text;
 }
 

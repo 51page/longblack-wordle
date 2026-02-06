@@ -271,8 +271,31 @@ function handleGameEnd(showModal = true) {
 function showResultModal() {
     const todayWordData = getTodayWord();
     document.getElementById('result-note-title').textContent = todayWordData.original || todayWordData.word;
-    document.getElementById('result-note-desc').textContent = todayWordData.description;
     document.getElementById('result-note-link').href = todayWordData.url;
+
+    // 닉네임 확인 버튼 이벤트
+    const nicknameInput = document.getElementById('result-nickname-input');
+    const confirmBtn = document.getElementById('confirm-nickname-btn');
+
+    if (nicknameInput && confirmBtn) {
+        // 기존 상태 초기화 (이미 입력했었는지 여부는 세션이나 로컬스토리지에 저장 가능하지만 
+        // 여기선 단순하게 모달 열릴 때마다 초기화하거나 상태에 따라 처리)
+        nicknameInput.disabled = false;
+        confirmBtn.disabled = false;
+        nicknameInput.value = localStorage.getItem('userNickname') || '';
+
+        confirmBtn.onclick = () => {
+            if (nicknameInput.value.trim().length < 2) {
+                showMessage('닉네임을 2자 이상 입력해주세요');
+                return;
+            }
+            nicknameInput.disabled = true;
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = '완료';
+            localStorage.setItem('userNickname', nicknameInput.value.trim());
+            // 여기서 서버에 저장하는 로직을 추가할 수 있음
+        };
+    }
 
     const shareBtn = document.getElementById('result-share-btn');
     shareBtn.onclick = () => {

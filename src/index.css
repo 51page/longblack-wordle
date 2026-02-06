@@ -369,32 +369,16 @@ body {
 }
 
 /* 피드백 상태 */
+.char-tile.active {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(44, 95, 23, 0.1);
+}
+
 .char-tile.focused {
-    position: relative;
-}
-
-.char-tile.focused::after {
-    content: '';
-    position: absolute;
-    width: 2px;
-    height: 60%;
-    background-color: var(--color-primary);
-    left: 50%;
-    top: 20%;
-    transform: translateX(-50%);
-    animation: blink 0.8s step-end infinite;
-}
-
-@keyframes blink {
-
-    from,
-    to {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0;
-    }
+    border-color: var(--color-primary);
+    border-width: 3px;
+    background-color: rgba(44, 95, 23, 0.05);
+    font-weight: 900;
 }
 
 .char-tile.correct {
@@ -563,6 +547,11 @@ body {
     font-size: 16px;
     font-weight: 700;
     transition: transform 0.1s;
+}
+
+.share-btn.toned-down {
+    background-color: #787C7E;
+    opacity: 0.85;
 }
 
 .share-btn:active {
