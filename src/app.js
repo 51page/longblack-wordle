@@ -111,7 +111,7 @@ function initializeGame() {
 
 // 입력 내용과 게임 상태 동기화
 function syncStateWithInput(value) {
-    const chars = value.split('');
+    const chars = Array.from(value);
     if (chars.length === 0) {
         gameState.currentGuess = [];
         gameState.currentInput = { cho: '', jung: '', jong: '' };
@@ -360,15 +360,31 @@ function initHiddenInput() {
         }
     });
 
+    let isComposing = false;
+
+    input.addEventListener('compositionstart', () => {
+        isComposing = true;
+    });
+
+    input.addEventListener('compositionend', (e) => {
+        isComposing = false;
+        // 조합이 끝난 후 한 번 더 동기화
+        syncStateWithInput(input.value);
+        updateBoardWithComposition();
+        saveCurrentState();
+    });
+
     input.addEventListener('input', (e) => {
         if (gameState.gameStatus !== 'playing') {
             input.value = '';
             return;
         }
 
-        // 입력 글자수 제한
-        if (input.value.length > gameState.wordLength) {
-            input.value = input.value.slice(0, gameState.wordLength);
+        // 조합 중에는 입력값을 직접 수정하지 않음 (글자 거꾸로 입력되거나 조합 깨짐 방지)
+        if (!isComposing) {
+            if (input.value.length > gameState.wordLength) {
+                input.value = input.value.slice(0, gameState.wordLength);
+            }
         }
 
         syncStateWithInput(input.value);
@@ -382,6 +398,13 @@ function initHiddenInput() {
         if (e.key === 'Enter') {
             e.preventDefault();
             submitGuess();
+        } else if (e.key === 'Backspace') {
+            // 모바일에서 백스페이스 대응을 위해 지연 동기화
+            setTimeout(() => {
+                syncStateWithInput(input.value);
+                updateBoardWithComposition();
+                saveCurrentState();
+            }, 10);
         }
     });
 
