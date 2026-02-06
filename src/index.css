@@ -74,9 +74,11 @@ body {
     width: 100%;
     max-width: var(--max-width);
     padding: 0 20px;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    display: flex;
+    justify-content: center;
     align-items: center;
+    position: relative;
+    height: 100%;
 }
 
 .logo {
@@ -88,19 +90,24 @@ body {
     padding: 0 10px;
     white-space: nowrap;
     cursor: pointer;
-    /* 홈 버튼처럼 보이게 */
 }
 
 .header-buttons {
+    position: absolute;
+    right: 20px;
     display: flex;
     gap: 8px;
-    justify-content: flex-end;
 }
 
 .auth-container {
+    position: absolute;
+    left: 20px;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+}
+
+.auth-container.hidden {
+    display: none;
 }
 
 .login-btn {
@@ -460,9 +467,14 @@ body {
 
 /* 숨겨진 입력창 */
 #hidden-input {
-    position: absolute;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    width: 0;
+    height: 0;
     opacity: 0;
     pointer-events: none;
+    z-index: -1;
 }
 
 /* 모달 - Modern Gray */

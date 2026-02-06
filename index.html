@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="롱블랙 문장 퍼즐 - 매일 새로운 롱블랙 노트를 맞춰보세요">
     <meta name="keywords" content="롱블랙, 단어게임, 단어맞추기, LongBlack">
-    <meta property="og:title" content="롱블랙 문장 퍼즐">
+    <meta property="og:title" content="LB 문장 채우기">
     <meta property="og:description" content="매일 새로운 롱블랙 노트를 맞춰보세요">
     <meta property="og:type" content="website">
-    <title>LB 문장 퍼즐</title>
+    <title>LB 문장 채우기</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap"
@@ -22,7 +22,7 @@
     <div id="app">
         <header id="header">
             <div class="header-content">
-                <div id="auth-container" class="auth-container" style="display: none;">
+                <div id="auth-container" class="auth-container hidden">
                     <button id="login-btn" class="login-btn">
                         <svg width="18" height="18" viewBox="0 0 24 24">
                             <path
@@ -44,7 +44,7 @@
                         <img id="user-photo" src="" alt="Profile">
                     </div>
                 </div>
-                <h1 class="logo">LB 문장 퍼즐</h1>
+                <h1 class="logo">LB 문장 채우기</h1>
                 <div class="header-buttons">
                     <button id="stats-btn" class="icon-btn" aria-label="통계">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -129,33 +129,15 @@
     <div id="stats-modal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>내 통계</h2>
+                <h2 id="stats-modal-title">오늘의 랭킹</h2>
                 <button class="close-btn" data-modal="stats">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value" id="stat-played">0</div>
-                        <div class="stat-label">플레이</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="stat-win-rate">0</div>
-                        <div class="stat-label">승률</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="stat-streak">0</div>
-                        <div class="stat-label">연속</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="stat-max-streak">0</div>
-                        <div class="stat-label">최고</div>
-                    </div>
-                </div>
 
                 <div class="leaderboard-section">
                     <h3>오늘의 실시간 랭킹</h3>
                     <div id="leaderboard-list" class="leaderboard-list">
-                        <div class="loading-spinner">로그인 후 실시간 랭킹을 확인하세요!</div>
+                        <div class="loading-spinner">오늘의 랭킹을 불러오고 있어요...</div>
                     </div>
                 </div>
 

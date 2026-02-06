@@ -149,7 +149,7 @@ function generateShareText(guesses, evaluations, wordLength, gameNumber) {
     const guessCount = guesses.length;
     const totalChances = 5;
 
-    let text = `LB 문장 퍼즐 #${gameNumber}\n`;
+    let text = `LB 문장 채우기 #${gameNumber}\n`;
 
     if (isWon) {
         text += `${totalChances}번의 기회 중 ${guessCount}번 만에 정답을 맞췄어요!\n\n`;
@@ -166,7 +166,7 @@ function generateShareText(guesses, evaluations, wordLength, gameNumber) {
         text += line + '\n';
     });
 
-    text += '\n당신도 문장 퍼즐에 도전해보세요!\n';
+    text += '\n당신도 문장 채우기에 도전해보세요!\n';
     text += window.location.origin + window.location.pathname;
 
     return text;

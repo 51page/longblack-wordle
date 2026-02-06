@@ -15,6 +15,10 @@ function saveGameState(state) {
 
 // 게임 상태 불러오기
 function loadGameState() {
+    // 구글 로그인이 제거되었으므로, 매번 새로운 상태로 시작하도록 null 반환
+    return null;
+
+    /* 이전 로직 보존 (필요시 복구용)
     try {
         const saved = localStorage.getItem(STORAGE_KEYS.GAME_STATE);
         if (!saved) return null;
@@ -32,6 +36,7 @@ function loadGameState() {
         console.error('Failed to load game state:', e);
         return null;
     }
+    */
 }
 
 // 통계 저장

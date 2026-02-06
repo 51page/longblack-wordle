@@ -11,11 +11,10 @@ function initializeModals() {
         updateStatsDisplay();
     });
 
-
     // 모달 닫기
     document.querySelectorAll('.close-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const modalName = e.target.dataset.modal;
+            const modalName = e.target.dataset.modal || e.target.closest('.close-btn').dataset.modal;
             closeModal(modalName);
         });
     });
@@ -48,31 +47,20 @@ function closeModal(modalName) {
 }
 
 function updateStatsDisplay() {
-    const stats = loadStatistics();
-    const isLoggedIn = typeof firebase !== 'undefined' && firebase.auth().currentUser;
-    const loginMsg = document.getElementById('stats-login-msg');
-
-    if (loginMsg) {
-        if (!isLoggedIn) {
-            loginMsg.classList.remove('hidden');
-        } else {
-            loginMsg.classList.add('hidden');
-        }
+    // 통계 제목 업데이트 (오늘의 랭킹 + 날짜)
+    const statsTitle = document.getElementById('stats-modal-title');
+    if (statsTitle) {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        statsTitle.textContent = `오늘의 랭킹 (${year}-${month}-${day})`;
     }
 
-    document.getElementById('stat-played').textContent = stats.played;
-
-    const winRate = stats.played > 0
-        ? Math.round((stats.won / stats.played) * 100)
-        : 0;
-    document.getElementById('stat-win-rate').textContent = `${winRate}%`;
-
-    document.getElementById('stat-streak').textContent = stats.currentStreak;
-    document.getElementById('stat-max-streak').textContent = stats.maxStreak;
-
-    // 배지 및 리더보드 업데이트
-    updateBadgeDisplay(stats);
-    updateLeaderboardDisplay();
+    // 개인 통계 표시는 제거되었으므로 리더보드 디스플레이만 호출
+    if (typeof updateLeaderboardDisplay === 'function') {
+        updateLeaderboardDisplay();
+    }
 }
 
 // 배지 표시 업데이트
