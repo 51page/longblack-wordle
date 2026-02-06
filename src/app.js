@@ -338,6 +338,14 @@ function saveCurrentState() {
     saveGameState(state);
 }
 
+// 커서 위치를 항상 끝으로 유지하는 헬퍼 함수
+function moveCursorToEnd(el) {
+    if (el.setSelectionRange) {
+        const len = el.value.length;
+        el.setSelectionRange(len, len);
+    }
+}
+
 // 숨겨진 입력창 처리
 function initHiddenInput() {
     const input = document.getElementById('hidden-input');
@@ -372,6 +380,8 @@ function initHiddenInput() {
         syncStateWithInput(input.value);
         updateBoardWithComposition();
         saveCurrentState();
+        // 커서 위치 교정
+        moveCursorToEnd(input);
     });
 
     input.addEventListener('input', (e) => {
@@ -390,6 +400,9 @@ function initHiddenInput() {
         syncStateWithInput(input.value);
         updateBoardWithComposition();
         saveCurrentState();
+
+        // 커서가 0으로 튀는 것을 방지
+        moveCursorToEnd(input);
     });
 
     input.addEventListener('keydown', (e) => {
@@ -404,6 +417,7 @@ function initHiddenInput() {
                 syncStateWithInput(input.value);
                 updateBoardWithComposition();
                 saveCurrentState();
+                moveCursorToEnd(input);
             }, 10);
         }
     });
@@ -414,6 +428,9 @@ function initHiddenInput() {
         gameState.isFocused = true;
         document.body.classList.add('keyboard-active');
         updateBoardWithComposition();
+
+        // 포커스 시 커서를 끝으로 보냄
+        moveCursorToEnd(input);
 
         // 모바일 브라우저의 강제 스크롤 방지를 위해 상단 고정
         setTimeout(() => {
@@ -431,6 +448,7 @@ function initHiddenInput() {
 
     updateHintButton();
 }
+
 
 // 로고 클릭시 새로고침 (홈 버튼 기능)
 function initLogo() {
