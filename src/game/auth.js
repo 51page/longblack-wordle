@@ -225,27 +225,52 @@ async function saveNickname() {
     }
 }
 
-// 아카이빙 실행 함수
-async function archiveGameResult(won, attempts) {
-    const user = auth ? auth.currentUser : null;
-    if (!user || !db) return;
+// 아카이빙 실행 함수 (닉네임 포함 버전)
+async function archiveGameResult(won, attempts, nickname = null) {
+    if (!db) return;
 
-    const stats = loadStatistics();
+    let user = auth ? auth.currentUser : null;
+
+    // 로그인이 안 되어 있다면 익명 로그인 시도
+    if (!user && auth) {
+        try {
+            const anon = await auth.signInAnonymously();
+            user = anon.user;
+        } catch (e) {
+            console.error("Anonymous sign in failed:", e);
+            let guestId = localStorage.getItem('guest-uid');
+            if (!guestId) {
+                guestId = 'guest_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('guest-uid', guestId);
+            }
+            user = { uid: guestId, isGuest: true };
+        }
+    }
+
+    if (!user) return;
+
     const today = new Date().toDateString();
 
+    // 최종 닉네임 결정: 전달받은 닉네임 > 기존 로컬저장 닉네임
+    const finalNickname = nickname || localStorage.getItem('userNickname') || '익명의 러너';
+
     try {
-        await db.collection('users').doc(user.uid).set({
-            photoURL: user.photoURL,
-            stats: stats,
+        const dataToUpdate = {
+            nickname: finalNickname,
             lastPlayedDate: today,
             todayAttempts: won ? attempts : 7,
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
-        console.log("Archive success with attempts:", attempts);
+        };
+
+        if (user.photoURL) dataToUpdate.photoURL = user.photoURL;
+
+        await db.collection('users').doc(user.uid).set(dataToUpdate, { merge: true });
+
+        console.log("Archive success for:", finalNickname, "with attempts:", attempts);
 
         // 데이터 저장 직후 리더보드 갱신 유도
         if (typeof updateLeaderboardDisplay === 'function') {
-            setTimeout(updateLeaderboardDisplay, 500);
+            await updateLeaderboardDisplay();
         }
     } catch (e) {
         console.error("Archive failed:", e);
@@ -264,9 +289,9 @@ async function fetchLeaderboard() {
             .get();
 
         const users = snapshot.docs.map(doc => doc.data());
-        // 정답자만 필터링 (1~6회 시도) 후 정렬
+        // 정답자만 필터링 (1~5회 시도) 후 정렬
         return users
-            .filter(u => u.todayAttempts && u.todayAttempts <= 6)
+            .filter(u => u.todayAttempts && u.todayAttempts <= 5)
             .sort((a, b) => a.todayAttempts - b.todayAttempts);
     } catch (e) {
         console.error("Leaderboard fetch failed:", e);

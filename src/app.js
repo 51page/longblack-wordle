@@ -236,9 +236,11 @@ function handleGameEnd(showModal = true) {
     // 통계 및 서버 저장 (이미 저장이 되어있을 수도 있지만 안전하게 호출)
     updateStatistics(won, guessCount);
 
+    /* 닉네임 입력 완료 시 저장하므로 여기서는 호출하지 않음
     if (typeof archiveGameResult === 'function') {
         archiveGameResult(won, guessCount);
     }
+    */
 
     if (!showModal) return;
 
@@ -278,15 +280,23 @@ function showResultModal() {
         nicknameInput.value = localStorage.getItem('userNickname') || '';
 
         confirmBtn.onclick = () => {
-            if (nicknameInput.value.trim().length < 2) {
+            const nick = nicknameInput.value.trim();
+            if (nick.length < 2) {
                 showMessage('닉네임을 2자 이상 입력해주세요');
                 return;
             }
             nicknameInput.disabled = true;
             confirmBtn.disabled = true;
             confirmBtn.textContent = '완료';
-            localStorage.setItem('userNickname', nicknameInput.value.trim());
-            // 여기서 서버에 저장하는 로직을 추가할 수 있음
+            localStorage.setItem('userNickname', nick);
+
+            // 랭킹에 기록 반영을 위해 archiveGameResult 호출
+            const won = gameState.gameStatus === 'won';
+            const guessCount = gameState.guesses.length;
+            if (typeof archiveGameResult === 'function') {
+                archiveGameResult(won, guessCount, nick);
+                showMessage('랭킹에 기록되었습니다!');
+            }
         };
     }
 
@@ -341,7 +351,7 @@ function initHiddenInput() {
         const isBlankClick = e.target.closest('.char-tile') || e.target.closest('.char-boxes');
 
         if (isBlankClick) {
-            input.focus();
+            input.focus({ preventScroll: true });
         } else {
             // 버튼, 링크, 혹은 다른 입력창(닉네임 등)을 클릭한 게 아니라면 포커스 해제
             if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A' && e.target.id !== 'result-nickname-input') {
@@ -381,6 +391,13 @@ function initHiddenInput() {
         gameState.isFocused = true;
         document.body.classList.add('keyboard-active');
         updateBoardWithComposition();
+
+        // 모바일 브라우저의 강제 스크롤 방지를 위해 상단 고정
+        setTimeout(() => {
+            window.scrollTo(0, 0);
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+        }, 50);
     });
 
     input.addEventListener('blur', () => {
