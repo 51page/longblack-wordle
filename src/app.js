@@ -107,13 +107,6 @@ function initializeGame() {
         handleGameEnd(false); // 이미 종료된 상태이므로 모달 띄우지 않음
     }
 
-    // 물리 키보드 포커스 유지
-    document.addEventListener('keydown', (e) => {
-        if (!document.querySelector('.modal:not(.hidden)')) {
-            const input = document.getElementById('hidden-input');
-            if (input) input.focus();
-        }
-    });
 }
 
 // 입력 내용과 게임 상태 동기화
@@ -340,12 +333,19 @@ function initHiddenInput() {
     const input = document.getElementById('hidden-input');
     if (!input) return;
 
-    // 화면 어디를 눌러도 입력창 포커스
+    // 빈칸 클릭 시에만 입력창 활성화 (자동 포커스 방지)
     document.addEventListener('click', (e) => {
-        if (gameState.gameStatus === 'playing' && !document.querySelector('.modal:not(.hidden)')) {
-            // 버튼이나 인풋 자체를 클릭한 게 아니면 포커스
-            if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A' && e.target.tagName !== 'INPUT') {
-                input.focus();
+        if (gameState.gameStatus !== 'playing' || document.querySelector('.modal:not(.hidden)')) return;
+
+        // 글자 박스(빈칸) 영역을 클릭했는지 확인
+        const isBlankClick = e.target.closest('.char-tile') || e.target.closest('.char-boxes');
+
+        if (isBlankClick) {
+            input.focus();
+        } else {
+            // 버튼, 링크, 혹은 다른 입력창(닉네임 등)을 클릭한 게 아니라면 포커스 해제
+            if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A' && e.target.id !== 'result-nickname-input') {
+                input.blur();
             }
         }
     });
@@ -375,8 +375,6 @@ function initHiddenInput() {
         }
     });
 
-    // 초기 포커스
-    setTimeout(() => input.focus(), 500);
 
     // 포커스 상태 관리
     input.addEventListener('focus', () => {
