@@ -79,21 +79,21 @@ function evaluateGuess(guess, answer) {
     const guessChars = guess.split('');
     const used = new Array(answer.length).fill(false);
 
-    // 첫 번째 패스: 정확한 위치 찾기
+    // 첫 번째 패스: 정확한 위치 찾기 (대소문자 구분 없음)
     for (let i = 0; i < guessChars.length; i++) {
-        if (guessChars[i] === answerChars[i]) {
+        if (guessChars[i].toUpperCase() === answerChars[i].toUpperCase()) {
             evaluation[i] = 'correct';
             used[i] = true;
         }
     }
 
-    // 두 번째 패스: 존재하지만 위치가 틀린 글자 찾기
+    // 두 번째 패스: 존재하지만 위치가 틀린 글자 찾기 (대소문자 구분 없음)
     for (let i = 0; i < guessChars.length; i++) {
         if (evaluation[i] === 'correct') continue;
 
         let found = false;
         for (let j = 0; j < answerChars.length; j++) {
-            if (!used[j] && guessChars[i] === answerChars[j]) {
+            if (!used[j] && guessChars[i].toUpperCase() === answerChars[j].toUpperCase()) {
                 evaluation[i] = 'present';
                 used[j] = true;
                 found = true;
@@ -145,7 +145,7 @@ function checkGameEnd(guesses, answer, maxGuesses = 5) {
 
 // 공유 텍스트 생성
 function generateShareText(guesses, evaluations, wordLength, gameNumber) {
-    const isWon = guesses[guesses.length - 1] === getTodayWord().word;
+    const isWon = guesses.length > 0 && guesses[guesses.length - 1].toUpperCase() === getTodayWord().word.toUpperCase();
     const guessCount = guesses.length;
     const totalChances = 5;
 

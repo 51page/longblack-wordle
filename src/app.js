@@ -126,8 +126,8 @@ function syncStateWithInput(value) {
     if (dec) {
         gameState.currentInput = dec;
     } else {
-        // 단일 자음/모음 또는 영문/기타
-        gameState.currentInput = { cho: lastChar.toUpperCase(), jung: '', jong: '' };
+        // 단일 자음/모음 또는 영문/기타 (사용자 입력 케이스 유지)
+        gameState.currentInput = { cho: lastChar, jung: '', jong: '' };
     }
 }
 
@@ -202,7 +202,7 @@ async function submitGuess() {
 
     await new Promise(resolve => setTimeout(resolve, 1500));
 
-    if (guess !== gameState.answer) {
+    if (guess.toUpperCase() !== gameState.answer.toUpperCase()) {
         // 틀렸을 때 입력값 초기화
         gameState.currentGuess = [];
         gameState.currentInput = { cho: '', jung: '', jong: '' };
